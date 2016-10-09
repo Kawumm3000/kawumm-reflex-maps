@@ -4744,11 +4744,6 @@ global
 		Vector3 position -1258.000000 -176.000000 192.000000
 		String64 prefabName palm
 	entity
-		type Target
-		Vector3 position -2800.000000 0.000000 -6560.000000
-		Vector3 angles 58.000000 20.000000 0.000000
-		String32 name end
-	entity
 		type RaceFinish
 	brush
 		vertices
@@ -4995,3 +4990,8 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 
 			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 
+	entity
+		type Target
+		Vector3 position -2034.000000 98.000000 -8750.000000
+		Vector3 angles 220.000000 20.000000 0.000000
+		String32 name end
