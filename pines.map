@@ -1256,6 +1256,16 @@ prefab woodensupport
 	entity
 		type WorldSpawn
 		String32 targetGameOverCamera end
+		Float sky.skyAngle 312.942078
+		ColourXRGB32 sky.sunColor ffffffff
+		ColourXRGB32 sky.cloudsColor ffdedede
+		Float sky.cloudsCoverage 0.500000
+		Float sky.cloudsSpeed.x 24.000000
+		Float sky.cloudsBias 0.500000
+		Float sky.cloudsRoughness 0.350000
+		Float sky.cloudsDensity 0.500000
+		Float sky.cloudsThickness 0.500000
+		String256 title kaw-Pines
 		UInt8 playersMin 1
 		UInt8 playersMax 16
 		Bool8 modeCTF 0
@@ -1265,14 +1275,14 @@ prefab woodensupport
 		Bool8 modeTraining 0
 	brush
 		vertices
-			0.000000 0.000000 16.000000
-			16.000000 0.000000 16.000000
-			16.000000 0.000000 -16.000000
-			0.000000 -8.000000 -16.000000
-			0.000000 0.000000 -16.000000
-			16.000000 -16.000000 16.000000
-			16.000000 -8.000000 -16.000000
-			0.000000 -16.000000 16.000000
+			0.000000 0.000000 0.000000
+			16.000000 0.000000 0.000000
+			16.000000 0.000000 -32.000000
+			0.000000 -8.000000 -32.000000
+			0.000000 0.000000 -32.000000
+			16.000000 -16.000000 0.000000
+			16.000000 -8.000000 -32.000000
+			0.000000 -16.000000 0.000000
 		faces
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 4 0x00000000 common/materials/wood/bare
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 4 2 6 0x00000000 common/materials/wood/bare
@@ -1280,6 +1290,23 @@ prefab woodensupport
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 4 3 7 0x00000000 common/materials/wood/bare
 			0.000000 0.000000 1.000000 1.000000 0.000000 5 1 0 7 0x00000000 common/materials/wood/bare
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 6 5 7 0x00000000 common/materials/wood/bare
+	brush
+		vertices
+			0.000000 0.000000 16.000000
+			16.000000 0.000000 16.000000
+			16.000000 0.000000 0.000000
+			0.000000 0.000000 0.000000
+			0.000000 -16.000000 16.000000
+			16.000000 -16.000000 16.000000
+			16.000000 -16.000000 0.000000
+			0.000000 -16.000000 0.000000
+		faces
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0x00000000 common/materials/wood/bare
+			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0x00000000 common/materials/wood/bare
+			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0x00000000 common/materials/wood/bare
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 common/materials/wood/bare
+			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 common/materials/wood/bare
+			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 common/materials/wood/bare
 prefab longpipe
 	entity
 		type Effect
@@ -3309,6 +3336,687 @@ prefab pinetext
 		String64 effectName common/text/industrial/text_industrial_i
 		Float effectScale 0.070000
 		ColourARGB32 material0Albedo ff000000
+prefab highscore
+	entity
+		type Effect
+		Vector3 position 54.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_g
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_c
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 12.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 38.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 54.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_9
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 54.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 54.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 54.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 54.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 48.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 42.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_8
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 -32.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 -20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 -8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 36.000000 16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_8
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 0.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -6.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_g
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -12.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -18.000000 20.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -25.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -18.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -12.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -6.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_w
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 0.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_7
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 8.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_5
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 30.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_6
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 24.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_6
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 18.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_5
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_b
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 0.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -6.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_c
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -12.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -18.000000 -28.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -30.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -24.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -18.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -12.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -6.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 0.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 -16.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_v
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 6.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position 0.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -6.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -12.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -18.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -24.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -30.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -36.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -42.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -48.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -54.000000 -4.000000 1.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+prefab redarrow
+	entity
+		type Effect
+		Vector3 position 0.000000 2.000000 0.000000
+		String64 effectName common/signs/industrial/sign_industrial_painted_stripe_64x8
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position 0.000000 2.000000 -12.000000
+		Vector3 angles 270.000000 90.000000 0.000000
+		String64 effectName common/signs/industrial/sign_industrial_arrow
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+prefab greenarrow
+	entity
+		type Effect
+		Vector3 position 0.000000 -8.000000 -1.000000
+		Vector3 angles 90.000000 -0.000000 90.000000
+		String64 effectName common/signs/industrial/sign_industrial_painted_stripe_64x8
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00ff00
+	entity
+		type Effect
+		Vector3 position -12.000000 -8.000000 -1.000000
+		Vector3 angles -180.000000 -0.000005 180.000000
+		String64 effectName common/signs/industrial/sign_industrial_arrow
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00ff00
+prefab blackarrow
+	entity
+		type Effect
+		Vector3 position 0.000000 0.000000 7.000000
+		Vector3 angles 90.000000 -0.000000 90.000000
+		String64 effectName common/signs/industrial/sign_industrial_painted_stripe_64x8
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position -12.000000 0.000000 7.000000
+		Vector3 angles -180.000000 -0.000005 180.000000
+		String64 effectName common/signs/industrial/sign_industrial_arrow
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+prefab slidehelp1
+	entity
+		type Prefab
+		Vector3 position 2.000000 -7.000000 45.000000
+		Vector3 angles 90.000000 -35.000000 -49.999996
+		String64 prefabName blackarrow
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 32.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 0.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_j
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -32.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_l
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 0.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+prefab slidehelp2a
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 32.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 0.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 0.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_j
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -8.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 11.000000 -8.000000 -32.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -24.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+	entity
+		type Effect
+		Vector3 position 4.000000 3.000000 -16.000000
+		Vector3 angles 90.000000 -35.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_l
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff000000
+prefab slidehelp2
+	entity
+		type Prefab
+		Vector3 position -4.000000 8.000000 17.000000
+		Vector3 angles 90.000000 35.000000 -49.999996
+		String64 prefabName blackarrow
+	entity
+		type Prefab
+		Vector3 position 10.000000 8.000000 -32.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 prefabName slidehelp2a
 global
 	entity
 		type WorldSpawn
@@ -4745,23 +5453,6 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 
 			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 
-	brush
-		vertices
-			-2304.000000 -96.000000 4160.000000
-			-768.000000 -96.000000 4160.000000
-			-768.000000 -96.000000 1152.000000
-			-2304.000000 -96.000000 1152.000000
-			-2304.000000 -192.000000 4160.000000
-			-768.000000 -192.000000 4160.000000
-			-768.000000 -192.000000 1152.000000
-			-2304.000000 -192.000000 1152.000000
-		faces
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0x00000000 structural/dev/dev_grey64
-			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0x00000000 structural/dev/dev_grey64
-			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0x00000000 structural/dev/dev_grey64
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 structural/dev/dev_grey64
-			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 structural/dev/dev_grey64
-			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 structural/dev/dev_grey64
 	brush
 		vertices
 			-768.000000 -96.000000 2688.000000
@@ -8157,23 +8848,6 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 4 0 3 7 0xff000000 common/liquids/water/water
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0xff000000 common/liquids/water/water
 			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0x00000000 common/liquids/water/water
-	brush
-		vertices
-			-3840.000000 320.000000 6592.000000
-			-2304.000000 320.000000 6592.000000
-			-2304.000000 320.000000 6560.000000
-			-3840.000000 320.000000 6560.000000
-			-3840.000000 304.000000 6592.000000
-			-2304.000000 304.000000 6592.000000
-			-2304.000000 304.000000 6560.000000
-			-3840.000000 304.000000 6560.000000
-		faces
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0xff000000 internal/editor/textures/editor_fullclip
 	brush
 		vertices
 			-8512.000000 736.000000 2784.000000
@@ -14676,12 +15350,46 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 structural/dev/dev_grey64
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 
 			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 
+	brush
+		vertices
+			-3840.000000 320.000000 6592.000000
+			-2304.000000 320.000000 6592.000000
+			-2304.000000 320.000000 6544.000000
+			-3840.000000 320.000000 6544.000000
+			-3840.000000 304.000000 6592.000000
+			-2304.000000 304.000000 6592.000000
+			-2304.000000 304.000000 6544.000000
+			-3840.000000 304.000000 6544.000000
+		faces
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0xff000000 internal/editor/textures/editor_fullclip
+	brush
+		vertices
+			-2304.000000 -96.000000 4160.000000
+			-768.000000 -96.000000 4160.000000
+			-768.000000 -96.000000 1152.000000
+			-2304.000000 -96.000000 1152.000000
+			-2304.000000 -192.000000 4160.000000
+			-768.000000 -192.000000 4160.000000
+			-768.000000 -192.000000 1152.000000
+			-2304.000000 -192.000000 1152.000000
+		faces
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0x00000000 structural/dev/dev_grey64
+			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0x00000000 structural/dev/dev_grey64
+			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0x00000000 structural/dev/dev_grey64
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 structural/dev/dev_grey64
+			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 structural/dev/dev_grey64
+			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 structural/dev/dev_grey64
 	entity
 		type PlayerSpawn
 		Vector3 position 0.000000 -32.000000 -448.000000
 	entity
 		type CameraPath
-		UInt32 entityIdAttachedTo 1176
+		UInt32 entityIdAttachedTo 1267
 		UInt8 posLerp 2
 		UInt8 angleLerp 2
 	entity
@@ -15155,66 +15863,6 @@ global
 		String64 prefabName pine
 	entity
 		type Effect
-		Vector3 position -2304.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -2432.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -2560.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -2688.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -2816.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -2944.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3072.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3200.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3328.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3456.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3584.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
-		Vector3 position -3712.000000 320.000000 6576.000000
-		Vector3 angles 90.000000 0.000000 0.000000
-		String64 effectName common/meshes/planks/plank_single_02
-	entity
-		type Effect
 		Vector3 position -3712.000000 320.000000 6560.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
@@ -15276,10 +15924,6 @@ global
 	entity
 		type Prefab
 		Vector3 position -3648.000000 320.000000 6576.000000
-		String64 prefabName woodensupport
-	entity
-		type Prefab
-		Vector3 position -3520.000000 320.000000 6576.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
@@ -16019,3 +16663,208 @@ global
 		Vector3 position -19954.000000 213.000000 256.000000
 		Vector3 angles 0.000000 90.000000 0.000000
 		String64 prefabName pinetext
+	entity
+		type Prefab
+		Vector3 position -20432.000000 272.000000 256.000000
+		String64 prefabName highscore
+	entity
+		type Prefab
+		Vector3 position -3520.000000 320.000000 6576.000000
+		String64 prefabName woodensupport
+	entity
+		type Effect
+		Vector3 position -3712.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -3584.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -3456.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -3328.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -3200.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -3072.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2944.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2816.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2688.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2560.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2432.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2304.000000 320.000000 6544.000000
+		Vector3 angles 90.000000 0.000000 0.000000
+		String64 effectName common/meshes/planks/plank_single_02
+	entity
+		type Effect
+		Vector3 position -2271.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -2263.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -2255.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -2247.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -2239.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -2231.000000 316.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -1475.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1467.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1459.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1451.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1443.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1435.000000 276.000000 6527.000000
+		Vector3 angles 180.000000 0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -2248.000000 336.000000 6527.000000
+		Vector3 angles 90.000000 -0.000000 90.000000
+		String64 effectName common/signs/industrial/sign_industrial_painted_stripe_64x8
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff870d0d
+	entity
+		type Effect
+		Vector3 position -2260.000000 336.000000 6527.000000
+		Vector3 angles -180.000000 -0.000005 180.000000
+		String64 effectName common/signs/industrial/sign_industrial_arrow
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+	entity
+		type Effect
+		Vector3 position -1456.000000 296.000000 6527.000000
+		Vector3 angles -0.000003 90.000000 0.000000
+		String64 effectName common/signs/industrial/sign_industrial_painted_stripe_64x8
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Effect
+		Vector3 position -1456.000000 308.000000 6527.000000
+		Vector3 angles 180.000000 0.000005 -90.000000
+		String64 effectName common/signs/industrial/sign_industrial_arrow
+		Float effectScale 0.400000
+		String256 material0Name common/materials/wood/wood_painted
+		ColourARGB32 material0Albedo ff00bd00
+	entity
+		type Prefab
+		Vector3 position -1712.000000 -32.000000 3552.000000
+		String64 prefabName slidehelp1
+	entity
+		type Prefab
+		Vector3 position -1072.000000 -32.000000 3552.000000
+		String64 prefabName slidehelp1
+	entity
+		type Prefab
+		Vector3 position -1376.000000 -48.000000 3584.000000
+		String64 prefabName slidehelp2
+	entity
+		type Prefab
+		Vector3 position -2016.000000 -48.000000 3584.000000
+		String64 prefabName slidehelp2
