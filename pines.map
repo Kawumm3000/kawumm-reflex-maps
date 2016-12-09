@@ -4022,7 +4022,7 @@ global
 		type WorldSpawn
 		String32 targetGameOverCamera end
 		Float sky.skyAngle 312.942078
-		ColourXRGB32 sky.sunColor ffffffff
+		ColourXRGB32 sky.sunColor ffc5c5c5
 		ColourXRGB32 sky.cloudsColor ffdedede
 		Float sky.cloudsCoverage 0.500000
 		Float sky.cloudsSpeed.x 24.000000
@@ -15389,7 +15389,7 @@ global
 		Vector3 position 0.000000 -32.000000 -448.000000
 	entity
 		type CameraPath
-		UInt32 entityIdAttachedTo 1267
+		UInt32 entityIdAttachedTo 1345
 		UInt8 posLerp 2
 		UInt8 angleLerp 2
 	entity
@@ -16665,10 +16665,6 @@ global
 		String64 prefabName pinetext
 	entity
 		type Prefab
-		Vector3 position -20432.000000 272.000000 256.000000
-		String64 prefabName highscore
-	entity
-		type Prefab
 		Vector3 position -3520.000000 320.000000 6576.000000
 		String64 prefabName woodensupport
 	entity
@@ -16868,3 +16864,537 @@ global
 		type Prefab
 		Vector3 position -2016.000000 -48.000000 3584.000000
 		String64 prefabName slidehelp2
+	entity
+		type Effect
+		Vector3 position -20378.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_g
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_c
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20420.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20378.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_9
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20378.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20378.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20378.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20378.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20384.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_4
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20390.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_8
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 240.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 252.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 264.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 276.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20396.000000 288.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dot
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_8
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20432.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20438.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_g
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20444.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20450.000000 292.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20457.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20450.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_m
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20444.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20438.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_w
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20432.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_7
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 280.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_5
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_2
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20402.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_6
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_0
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20408.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_6
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_3
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_1
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20414.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_5
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_b
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20432.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_u
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20438.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_c
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20444.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20450.000000 244.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20462.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20456.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20450.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20444.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20438.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20432.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 256.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_v
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20426.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_h
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20432.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20438.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_p
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20444.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20450.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_a
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20456.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20462.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_k
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20468.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20474.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_t
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20480.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20486.000000 268.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20434.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_dash
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20442.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20448.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_l
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20454.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_d
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20466.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_v
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20472.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_e
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20478.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_r
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20484.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_s
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20490.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_i
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20496.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_o
+		Float effectScale 0.300000
+	entity
+		type Effect
+		Vector3 position -20502.000000 310.000000 257.000000
+		Vector3 angles 0.000000 -0.000000 0.000000
+		String64 effectName common/text/industrial/text_industrial_n
+		Float effectScale 0.300000
