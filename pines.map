@@ -15352,23 +15352,6 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 
 	brush
 		vertices
-			-3840.000000 320.000000 6592.000000
-			-2304.000000 320.000000 6592.000000
-			-2304.000000 320.000000 6544.000000
-			-3840.000000 320.000000 6544.000000
-			-3840.000000 304.000000 6592.000000
-			-2304.000000 304.000000 6592.000000
-			-2304.000000 304.000000 6544.000000
-			-3840.000000 304.000000 6544.000000
-		faces
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0xff000000 internal/editor/textures/editor_fullclip
-			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0xff000000 internal/editor/textures/editor_fullclip
-	brush
-		vertices
 			-2304.000000 -96.000000 4160.000000
 			-768.000000 -96.000000 4160.000000
 			-768.000000 -96.000000 1152.000000
@@ -15384,6 +15367,23 @@ global
 			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0x00000000 structural/dev/dev_grey64
 			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0x00000000 structural/dev/dev_grey64
 			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0x00000000 structural/dev/dev_grey64
+	brush
+		vertices
+			-3840.000000 320.000000 6600.000000
+			-2304.000000 320.000000 6600.000000
+			-2304.000000 320.000000 6552.000000
+			-3840.000000 320.000000 6552.000000
+			-3840.000000 304.000000 6600.000000
+			-2304.000000 304.000000 6600.000000
+			-2304.000000 304.000000 6552.000000
+			-3840.000000 304.000000 6552.000000
+		faces
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 1 2 3 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 6 5 4 7 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 2 1 5 6 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 0 3 7 4 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 3 2 6 7 0xff000000 internal/editor/textures/editor_fullclip
+			0.000000 0.000000 1.000000 1.000000 0.000000 1 0 4 5 0xff000000 internal/editor/textures/editor_fullclip
 	entity
 		type PlayerSpawn
 		Vector3 position 0.000000 -32.000000 -448.000000
@@ -15863,107 +15863,107 @@ global
 		String64 prefabName pine
 	entity
 		type Effect
-		Vector3 position -3712.000000 320.000000 6560.000000
+		Vector3 position -3712.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3584.000000 320.000000 6560.000000
+		Vector3 position -3584.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3456.000000 320.000000 6560.000000
+		Vector3 position -3456.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3328.000000 320.000000 6560.000000
+		Vector3 position -3328.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3200.000000 320.000000 6560.000000
+		Vector3 position -3200.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3072.000000 320.000000 6560.000000
+		Vector3 position -3072.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2944.000000 320.000000 6560.000000
+		Vector3 position -2944.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2816.000000 320.000000 6560.000000
+		Vector3 position -2816.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2688.000000 320.000000 6560.000000
+		Vector3 position -2688.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2560.000000 320.000000 6560.000000
+		Vector3 position -2560.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2432.000000 320.000000 6560.000000
+		Vector3 position -2432.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2304.000000 320.000000 6560.000000
+		Vector3 position -2304.000000 320.000000 6568.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Prefab
-		Vector3 position -3648.000000 320.000000 6576.000000
+		Vector3 position -3648.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -3392.000000 320.000000 6576.000000
+		Vector3 position -3392.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -3264.000000 320.000000 6576.000000
+		Vector3 position -3264.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -3136.000000 320.000000 6576.000000
+		Vector3 position -3136.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -3008.000000 320.000000 6576.000000
+		Vector3 position -3008.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -2880.000000 320.000000 6576.000000
+		Vector3 position -2880.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -2752.000000 320.000000 6576.000000
+		Vector3 position -2752.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -2624.000000 320.000000 6576.000000
+		Vector3 position -2624.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -2496.000000 320.000000 6576.000000
+		Vector3 position -2496.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -2368.000000 320.000000 6576.000000
+		Vector3 position -2368.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Prefab
-		Vector3 position -3776.000000 320.000000 6576.000000
+		Vector3 position -3776.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Effect
@@ -16669,66 +16669,66 @@ global
 		String64 prefabName highscore
 	entity
 		type Prefab
-		Vector3 position -3520.000000 320.000000 6576.000000
+		Vector3 position -3520.000000 320.000000 6584.000000
 		String64 prefabName woodensupport
 	entity
 		type Effect
-		Vector3 position -3712.000000 320.000000 6544.000000
+		Vector3 position -3712.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3584.000000 320.000000 6544.000000
+		Vector3 position -3584.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3456.000000 320.000000 6544.000000
+		Vector3 position -3456.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3328.000000 320.000000 6544.000000
+		Vector3 position -3328.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3200.000000 320.000000 6544.000000
+		Vector3 position -3200.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -3072.000000 320.000000 6544.000000
+		Vector3 position -3072.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2944.000000 320.000000 6544.000000
+		Vector3 position -2944.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2816.000000 320.000000 6544.000000
+		Vector3 position -2816.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2688.000000 320.000000 6544.000000
+		Vector3 position -2688.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2560.000000 320.000000 6544.000000
+		Vector3 position -2560.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2432.000000 320.000000 6544.000000
+		Vector3 position -2432.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
 		type Effect
-		Vector3 position -2304.000000 320.000000 6544.000000
+		Vector3 position -2304.000000 320.000000 6552.000000
 		Vector3 angles 90.000000 0.000000 0.000000
 		String64 effectName common/meshes/planks/plank_single_02
 	entity
