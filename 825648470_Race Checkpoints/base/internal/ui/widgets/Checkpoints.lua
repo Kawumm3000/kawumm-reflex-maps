@@ -181,49 +181,49 @@ function Checkpoints:draw()
     local fontSize = frameHeight * 1.15;
 	
 	local xOffset = 0
-
-
 	
-		nvgFontSize(fontSize);
+	nvgFontSize(fontSize);
 	nvgFontFace(FONT_TEXT2_BOLD);
 	nvgTextAlign(NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
 
 	nvgFontBlur(0);
 	nvgFillColor(fontColor);
 	
-	local tspeed = speed;
-	local ttime = currentCheckpointTime.abs;
-	local tdist = currentCheckpointDistance.abs;
+	local newSpeed = speed;
+	local newTime = currentCheckpointTime.abs;
+	local newDistance = currentCheckpointDistance.abs;
 	
-	local ospeed = 0; 
-	local otime = 0;
-	local odist = 0;
-	local dspeed = 0;
-	local dtime = 0;
-	local ddist = 0;
-	local dtext = "";
+	local oldSpeed = 0; 
+	local oldTime = 0;
+	local oldDistance = 0;
+	
+	local deltaSpeed = 0;
+	local deltaTime = 0;
+	local deltaDistance = 0;
+	
+	local tmpText = "";
 	
 	if storedCheckpoints[self.currentCheckpoint+1] ~= nil then
-		ospeed = storedCheckpoints[self.currentCheckpoint+1].speed;
-		otime = storedCheckpoints[self.currentCheckpoint+1].cTime;
-		odist = storedCheckpoints[self.currentCheckpoint+1].distance;
+		oldSpeed = storedCheckpoints[self.currentCheckpoint+1].speed;
+		oldTime = storedCheckpoints[self.currentCheckpoint+1].cTime;
+		oldDistance = storedCheckpoints[self.currentCheckpoint+1].distance;
 	else
 		deltaError = true;
 	end
 	
 	if useTotal == false then
-		ttime = currentCheckpointTime.abs - self.lastCheckpointTime;
-		tdist = currentCheckpointDistance.abs - self.lastCheckpointDistance;
+		newTime = currentCheckpointTime.abs - self.lastCheckpointTime;
+		newDistance = currentCheckpointDistance.abs - self.lastCheckpointDistance;
 		
 		if self.currentCheckpoint > 0 and storedCheckpoints[self.currentCheckpoint] ~= nil then
-		otime = otime - storedCheckpoints[self.currentCheckpoint].cTime;
-		odist = odist - storedCheckpoints[self.currentCheckpoint].distance;
+		oldTime = oldTime - storedCheckpoints[self.currentCheckpoint].cTime;
+		oldDistance = oldDistance - storedCheckpoints[self.currentCheckpoint].distance;
 		end
 	end
 	
-	dtime = ttime - otime;
-	ddist = tdist - odist;
-	dspeed = tspeed - ospeed;
+	deltaTime = newTime - oldTime;
+	deltaDistance = newDistance - oldDistance;
+	deltaSpeed = newSpeed - oldSpeed;
 	
 	if player.raceActive == false then
 		nvgText(0, (0)*fontSize, "---"); 
@@ -252,50 +252,50 @@ function Checkpoints:draw()
 			xOffset = xOffset + col3width; 
 		end
 	else
-		nvgText(0, (0)*fontSize, FormatTimeToDecimalTime(ttime)); 
+		nvgText(0, (0)*fontSize, FormatTimeToDecimalTime(newTime)); 
 		if showDelta then
 			xOffset = xOffset + colTimeDeltaWidth;
 			
 			if deltaError then 
-				dtext ="(---)"
+				tmpText ="(---)"
 			else
-				dtext ="(" .. Checkpoints:FormatTimeDelta(dtime) .. ")";
+				tmpText ="(" .. Checkpoints:FormatTimeDelta(deltaTime) .. ")";
 			end
 			
-			nvgText(xOffset, (0)*fontSize, dtext);  
+			nvgText(xOffset, (0)*fontSize, tmpText);  
 		end
 		
 		xOffset = xOffset + colSpeedWidth;
 		
 		if showSpeed then 
-			nvgText(xOffset, (0)*fontSize, tspeed .. "ups");
+			nvgText(xOffset, (0)*fontSize, newSpeed .. "ups");
 			if showDelta then
 				xOffset = xOffset + colSpeedDeltaWidth;
 				
 				if deltaError then 
-					dtext ="(---)"
+					tmpText ="(---)"
 				else
-					dtext ="(" .. dspeed .. ")";
+					tmpText ="(" .. deltaSpeed .. ")";
 				end
 				
-				nvgText(xOffset, (0)*fontSize, dtext);  
+				nvgText(xOffset, (0)*fontSize, tmpText);  
 			end
 			xOffset = xOffset + colDistanceWidth; 
 		end
 		
 		if showDistance then 
-			nvgText(xOffset, (0)*fontSize, tdist .. "u"); 
+			nvgText(xOffset, (0)*fontSize, newDistance .. "u"); 
 			
 			if showDelta then
 				xOffset = xOffset + colDistanceDeltaWidth;
 				
 				if deltaError then 
-					dtext ="(---)"
+					tmpText ="(---)"
 				else
-					dtext ="(" .. ddist .. ")";
+					tmpText ="(" .. deltaDistance .. ")";
 				end
 				
-				nvgText(xOffset, (0)*fontSize, dtext);  
+				nvgText(xOffset, (0)*fontSize, tmpText);  
 			end
 			xOffset = xOffset + col3width; 
 		end
@@ -309,21 +309,22 @@ function Checkpoints:draw()
 	for i, check in ipairs(self.checkPoints) do
 	--	check.speed;
 		--check.cTime;
-	local tspeed = check.speed;
-	local ttime = check.cTime;
-	local tdist = check.distance;
+	local newSpeed = check.speed;
+	local newTime = check.cTime;
+	local newDistance = check.distance;
 	
-	local ospeed = 0;
-	local otime = 0;
-	local odist = 0;
-	local dspeed = 0;
-	local dtime = 0;
-	local ddist = 0;
+	local oldSpeed = 0;
+	local oldTime = 0;
+	local oldDistance = 0;
+	
+	local deltaSpeed = 0;
+	local deltaTime = 0;
+	local deltaDistance = 0;
 	
 	if storedCheckpoints[i] ~= nil then
-		ospeed = storedCheckpoints[i].speed;
-		otime = storedCheckpoints[i].cTime;
-		odist = storedCheckpoints[i].distance;
+		oldSpeed = storedCheckpoints[i].speed;
+		oldTime = storedCheckpoints[i].cTime;
+		oldDistance = storedCheckpoints[i].distance;
 	else
 		deltaError = true;
 	end
@@ -333,56 +334,56 @@ function Checkpoints:draw()
 	local speedColor = whiteColor;
 	
 	if useTotal == false and i > 1 then
-		ttime = check.cTime - self.checkPoints[i-1].cTime;
-		tdist = check.distance - self.checkPoints[i-1].distance;
+		newTime = check.cTime - self.checkPoints[i-1].cTime;
+		newDistance = check.distance - self.checkPoints[i-1].distance;
 		if storedCheckpoints[i-1] ~= nil then
-			otime = otime - storedCheckpoints[i-1].cTime;
-			odist = odist - storedCheckpoints[i-1].distance;
+			oldTime = oldTime - storedCheckpoints[i-1].cTime;
+			oldDistance = oldDistance - storedCheckpoints[i-1].distance;
 		end
 	end
 	
 
-	dtime = ttime - otime;
-	if dtime > 0 then timeColor = redColor else timeColor = greenColor; end
-	ddist = tdist - odist;
-	if ddist > 0 then distColor = redColor else distColor = greenColor; end
-	dspeed = tspeed - ospeed;
-	if dspeed < 0 then speedColor = redColor else speedColor = greenColor; end
+	deltaTime = newTime - oldTime;
+	if deltaTime > 0 then timeColor = redColor else timeColor = greenColor; end
+	deltaDistance = newDistance - oldDistance;
+	if deltaDistance > 0 then distColor = redColor else distColor = greenColor; end
+	deltaSpeed = newSpeed - oldSpeed;
+	if deltaSpeed < 0 then speedColor = redColor else speedColor = greenColor; end
 
 	
 		nvgFillColor(whiteColor);
-		nvgText(0, (#self.checkPoints-i+1)*fontSize, i .. ": " .. FormatTimeToDecimalTime(ttime)); 
+		nvgText(0, (#self.checkPoints-i+1)*fontSize, i .. ": " .. FormatTimeToDecimalTime(newTime)); 
 		
 		if showDelta then
 			nvgFillColor(timeColor);
 			xOffset = xOffset + colTimeDeltaWidth;
 			if deltaError then 
 				nvgFillColor(whiteColor);
-				dtext ="(---)"
+				tmpText ="(---)"
 			else
-				dtext ="(" .. Checkpoints:FormatTimeDelta(dtime) .. ")";
+				tmpText ="(" .. Checkpoints:FormatTimeDelta(deltaTime) .. ")";
 			end
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, dtext);  
+			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
 		end
 		
 		xOffset = xOffset + colSpeedWidth;
 		
 		if showSpeed then 
 			nvgFillColor(whiteColor);
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tspeed .. "ups"); 
+			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, newSpeed .. "ups"); 
 			
 			if showDelta then
 				nvgFillColor(speedColor);
 				xOffset = xOffset + colSpeedDeltaWidth;
 				if deltaError then 
 					nvgFillColor(whiteColor);
-					dtext ="(---)"
-				elseif dspeed < 0 then 
-					dtext = "(" .. dspeed.. ")" 
+					tmpText ="(---)"
+				elseif deltaSpeed < 0 then 
+					tmpText = "(" .. deltaSpeed.. ")" 
 				else 
-					dtext = "(+" .. dspeed.. ")" 
+					tmpText = "(+" .. deltaSpeed.. ")" 
 				end
-				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, dtext);  
+				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
 			end
 			
 			xOffset = xOffset + colDistanceWidth; 
@@ -390,7 +391,7 @@ function Checkpoints:draw()
 		
 		if showDistance then 
 			nvgFillColor(whiteColor);
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tdist .. "u"); 
+			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, newDistance .. "u"); 
 			
 			if showDelta then
 				nvgFillColor(distColor);
@@ -398,13 +399,13 @@ function Checkpoints:draw()
 				
 				if deltaError then 
 					nvgFillColor(whiteColor);
-					dtext ="(---)"
-				elseif ddist < 0 then 
-					dtext = "(" .. ddist.. ")" 
+					tmpText ="(---)"
+				elseif deltaDistance < 0 then 
+					tmpText = "(" .. deltaDistance.. ")" 
 				else 
-					dtext = "(+" .. ddist.. ")" 
+					tmpText = "(+" .. deltaDistance.. ")" 
 				end
-				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, dtext);  
+				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
 			end
 			
 			xOffset = xOffset + col3width;
