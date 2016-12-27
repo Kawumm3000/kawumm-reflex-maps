@@ -1248,15 +1248,23 @@ function ScoreboardPlusRace:drawRaceLeaderboard(x, y, w, h, player, isRight)
 			nvgFillColor(UI2_COLTYPE_FAVORITE.base);
 		end
 		nvgText(x + padx + 325, iy, text);
-
+		
+		-- diff time
+		if rank~=startRank then
+			text = "(+" .. FormatTimeToDecimalShort(entry.timeMillis-entries[startRank].timeMillis) .. ")";
+			nvgText(x + padx + 430, iy, text);
+		end
+		
 		if old then
 			if entry.mapHash ~= leaderboard.mapHash then
 				local optargs = {};
 				optargs.optionalId = i;
-				ui2TooltipBox("This result was obtained on an older version", x + padx + 415, iy-16, 250, optargs);
+				ui2TooltipBox("This result was obtained on an older version", x + padx + 535, iy-16, 250, optargs);
 			end
 		end
+		
 
+				
 		iy = iy + 24;
 	end
 		

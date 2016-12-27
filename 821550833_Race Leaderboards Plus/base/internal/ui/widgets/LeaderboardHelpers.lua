@@ -113,3 +113,21 @@ function ExtractGlobalLeaderboardEntries(leaderboard)
 	
 	return entries, entryCount;
 end
+
+function FormatTimeToDecimalShort(time) 
+	local ms = time % 1000;
+	time = math.floor(time / 1000);
+	local seconds = time % 60;
+	time = math.floor(time / 60);
+	local minutes = time % 60;
+	--time = math.floor(time / 60);
+	--local hours = time;
+	
+	-- "Decimal time": http://en.wikipedia.org/wiki/Decimal_time
+	-- MM:SS.sss
+	if minutes>0 then
+	return string.format("%d:%d.%03d", minutes, seconds, ms);
+	else 
+	return string.format("%d.%03d", seconds, ms);
+	end
+end
