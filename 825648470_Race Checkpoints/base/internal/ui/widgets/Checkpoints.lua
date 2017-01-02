@@ -1,6 +1,10 @@
 --------------------------------------------------------------------------------
 -- Race Checkpoints by Kawumm
 --------------------------------------------------------------------------------
+C_RACE_STATE_PRERUN = 1 -- mostly used for invalid runs. display nothing, wait for start.
+C_RACE_STATE_RUN = 2 -- currently running and valid.
+C_RACE_STATE_JUST_FINISHED = 3 -- do finish stuff.
+C_RACE_STATE_FINISHED = 4 -- after run, display checkpoint table.
 
 require "base/internal/ui/reflexcore"
 
@@ -13,9 +17,11 @@ Checkpoints =
 	currentCheckpoint = 0,
 	startDistance = 0,
 	alpha = 1,
-	newRace = false,
 	lastMessage = "",
-	finishSwitch = true,
+	raceState = C_RACE_STATE_PRERUN,
+	recordNum = 0,
+	lastPlayer = nil,
+	lastLogIdRead = 0,
 	checkPoints = { 
 	},
 };
@@ -30,6 +36,7 @@ function Checkpoints:initialize()
 	widgetCreateConsoleVariable("beep","int","0");
 	widgetCreateConsoleVariable("hideDuringRun","int","0");
 	widgetCreateConsoleVariable("strictMessages","int","1");
+	widgetCreateConsoleVariable("autoSave","int","0");
 	
 	self.userData = loadUserData();
 	CheckSetDefaultValue(self, "userData", "table", {});
@@ -37,6 +44,7 @@ function Checkpoints:initialize()
 end
 
 function Checkpoints:finalize()
+	saveUserData(self.userData);
 end
 
 function Checkpoints:FormatTimeDelta(msTime) 
@@ -46,6 +54,11 @@ function Checkpoints:FormatTimeDelta(msTime)
 		return "+" .. FormatTimeToDecimalTime(msTime);
 	end
 end
+
+function Checkpoints:reset() 
+
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 function Checkpoints:draw()
@@ -69,6 +82,16 @@ function Checkpoints:draw()
 	local beep = (widgetGetConsoleVariable("beep") ~= 0);
 	local strictMessages = (widgetGetConsoleVariable("strictMessages") ~= 0);
 	
+	local autoSave = (widgetGetConsoleVariable("autoSave") ~= 0);
+	
+	-- Autosave
+	if autoSave and self.raceState == C_RACE_STATE_JUST_FINISHED then
+		if storedCheckpoints[#self.checkPoints] == nil or self.checkPoints[#self.checkPoints].cTime < storedCheckpoints[#self.checkPoints].cTime then
+			store = 1;
+		end
+	end
+	
+	-- Save
 	if store ~= 0 then
 		widgetSetConsoleVariable("store","0");
 		
@@ -90,12 +113,61 @@ function Checkpoints:draw()
 	rel = player.stats.distanceTravelled - self.startDistance - self.lastCheckpointDistance;
 	abs = player.stats.distanceTravelled - self.startDistance;
 }
+	-- Check for player switch
+	if self.lastPlayer ~= player.name then
+		self.checkPoints = { };
+		self.currentCheckpoint = 0;
+		self.lastCheckpointTime = 0;
+		self.lastCheckpointDistance = 0;
+		self.startDistance= player.stats.distanceTravelled;
+		self.lastPlayer = player.name;
+		self.raceState = C_RACE_STATE_PRERUN;
+	end
 	
+	
+	-- Check which state we are in
+	if not player.raceActive then
+		if self.raceState == C_RACE_STATE_RUN then
+			self.raceState = C_RACE_STATE_FINISHED;
+			-- Check for finish log entry (this part is taken from official RaceRecords widget)
+			local logCount = 0;
+			for k, v in pairs(log) do
+				logCount = logCount + 1;
+			end
+			
+			-- read log messages
+			for i = 1, logCount do
+				local logEntry = log[i];
 
+				-- only read newer entries
+				if self.lastLogIdRead < logEntry.id then
+					self.lastLogIdRead = logEntry.id;
+					
+					if logEntry.type == LOG_TYPE_RACEEVENT and logEntry.racePlayerIndex == player.index then
 
+						-- race finished? 
+						if (logEntry.raceEvent == RACE_EVENT_FINISH) or (logEntry.raceEvent == RACE_EVENT_FINISHANDWASRECORD) then
+							self.raceState = C_RACE_STATE_JUST_FINISHED;
+						end
+
+					end
+				end
+			end	
+		else
+			self.raceState = C_RACE_STATE_FINISHED;
+		end
+	elseif self.raceState == C_RACE_STATE_FINISHED then
+		self.checkPoints = { };
+		self.currentCheckpoint = 0;
+		self.lastCheckpointTime = 0;
+		self.lastCheckpointDistance = 0;
+		self.startDistance= player.stats.distanceTravelled;
+		self.raceState = C_RACE_STATE_RUN;
+	end
+	
 	-- Reached new Checkpoint?
-	if string.len(message.text) > 0 then
-		if (message.text == "Checkpoint " .. self.currentCheckpoint+1) or (not strictMessages) then
+	if string.len(message.text) > 0 and self.raceState == C_RACE_STATE_RUN then
+		if (message.text == "Checkpoint " .. self.currentCheckpoint+1) or (string.find(message.text, "^Checkpoint " .. self.currentCheckpoint+1 .. "[^%d]")~=nil) or (not strictMessages) then
 			if (message.text ~= self.lastMessage) then
 				
 				if beep then playSound("internal/misc/chat"); end
@@ -116,25 +188,13 @@ function Checkpoints:draw()
 	self.lastMessage = message.text;
 	
 	-- Add last Checkpoint when finished
-	if not player.raceActive then
-		self.newRace = true;
-		if player.raceTimePrevious ~= 0 and self.finishSwitch == true then
-		  self.finishSwitch = false;
-		  local newCheckpoint = {
-				speed = speed;
-				cTime = player.raceTimePrevious;
-				distance = player.stats.distanceTravelled - self.startDistance;
-				}
-			table.insert(self.checkPoints, newCheckpoint);
-		end
-		self.startDistance= player.stats.distanceTravelled;
-	elseif self.newRace == true then
-		self.finishSwitch = true;
-		self.newRace = false;
-		self.checkPoints = { };
-		self.currentCheckpoint = 0;
-		self.lastCheckpointTime = 0;
-		self.lastCheckpointDistance = 0;
+	if self.raceState == C_RACE_STATE_JUST_FINISHED then
+	  local newCheckpoint = {
+			speed = speed;
+			cTime = player.raceTimePrevious;
+			distance = player.stats.distanceTravelled - self.startDistance;
+			}
+		table.insert(self.checkPoints, newCheckpoint);
 	end
 	
 	
@@ -225,7 +285,7 @@ function Checkpoints:draw()
 	deltaDistance = newDistance - oldDistance;
 	deltaSpeed = newSpeed - oldSpeed;
 	
-	if player.raceActive == false then
+	if player.raceActive == false or self.raceState == C_RACE_STATE_PRERUN then
 		nvgText(0, (0)*fontSize, "---"); 
 		if showDelta then
 			xOffset = xOffset + colTimeDeltaWidth;
