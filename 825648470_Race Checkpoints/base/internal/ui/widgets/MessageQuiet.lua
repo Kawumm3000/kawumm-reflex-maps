@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Modified version of the original Reflex 0.47.5 "Message" widget
 -- This widget works exactly to the original message widget but plays no sound at
--- "Checkpoint #" messages
+-- "Checkpoint #" messages or hides them completely
 --------------------------------------------------------------------------------
 
 require "base/internal/ui/reflexcore"
@@ -9,15 +9,25 @@ require "base/internal/ui/reflexcore"
 MessageQuiet =
 {
 	currentMessage = "",
+	isCheckpointMessage = false,
 	intensity = 0
 };
 registerWidget("MessageQuiet");
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+function MessageQuiet:initialize()
+	self.userData = loadUserData();
+	CheckSetDefaultValue(self, "userData", "table", {});
+	CheckSetDefaultValue(self.userData, "hideMessages", "boolean", false);
+	CheckSetDefaultValue(self.userData, "muteMessages", "boolean", true);
+end
+
 function MessageQuiet:draw()
 	local x = 0;
 	local y = 0;
+	local user = self.userData;
 
 	-- fading down?
 	if string.len(self.currentMessage) > 0 and string.len(message.text) <= 0 then
@@ -28,8 +38,9 @@ function MessageQuiet:draw()
 	-- snap to new?
 	if string.len(message.text) > 0 then
 
+		self.isCheckpointMessage = (string.find(message.text, "^Checkpoint %d")~=nil)
 		-- play beep?
-		if (message.text ~= self.currentMessage or self.intensity < 1) and not (string.find(message.text, "^Checkpoint %d")~=nil) then
+		if (message.text ~= self.currentMessage or self.intensity < 1) and not (self.isCheckpointMessage and user.muteMessages) then
 			playSound("internal/misc/chat");
 		end
 	
@@ -40,6 +51,9 @@ function MessageQuiet:draw()
     -- Early out if HUD shouldn't be shown.
     if not shouldShowHUD() then return end;
 
+	-- Checkpoint messages hidden?
+	if user.hideMessages and self.isCheckpointMessage then return end;
+	
 	-- message expired?
 	if self.intensity <= 0 then return end;
 
@@ -87,3 +101,17 @@ function MessageQuiet:draw()
 		iy = iy + ystride;
 	end
 end
+
+ function MessageQuiet:drawOptions(x, y, intensity)
+	 local optargs = {};
+	 optargs.intensity = intensity;
+	 
+	 local user = self.userData;
+	 
+	 user.hideMessages = ui2RowCheckbox(x, y, WIDGET_PROPERTIES_COL_INDENT, "Hide Checkpoint Messages", user.hideMessages, optargs);
+	 y = y + 60;
+	 user.muteMessages = ui2RowCheckbox(x, y, WIDGET_PROPERTIES_COL_INDENT, "Mute Checkpoint Messages", user.muteMessages, optargs);
+	 y = y + 60;
+	 
+	 saveUserData(user);
+ end
