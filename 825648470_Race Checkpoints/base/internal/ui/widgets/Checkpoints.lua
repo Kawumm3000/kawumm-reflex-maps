@@ -10,9 +10,9 @@ require "base/internal/ui/reflexcore"
 
 Checkpoints =
 {
-	currentCheckpointTime = 0,
+	currentCheckpointTime = { },
 	lastCheckpointTime = 0,
-	currentCheckpointDistance = 0,
+	currentCheckpointDistance = { },
 	lastCheckpointDistance = 0,
 	currentCheckpoint = 0,
 	startDistance = 0,
@@ -21,9 +21,21 @@ Checkpoints =
 	raceState = C_RACE_STATE_PRERUN,
 	recordNum = 0,
 	lastPlayer = nil,
+	currentPlayer = nil,
 	lastLogIdRead = 0,
+	speed = 0,
+	raceTime = 0,
 	checkPoints = { 
 	},
+	storedCheckpoints = {
+	},
+	showSpeed = true,
+	showDistance = true,
+	showDelta = true,
+	useTotal = false,
+	hideDuringRun = false,
+	strictMessages = true,
+	autoSave =false,
 };
 registerWidget("Checkpoints");
 
@@ -56,151 +68,47 @@ function Checkpoints:FormatTimeDelta(msTime)
 end
 
 function Checkpoints:reset() 
-
+		self.checkPoints = { };
+		self.currentCheckpoint = 0;
+		self.lastCheckpointTime = 0;
+		self.lastCheckpointDistance = 0;
+		self.startDistance= self.player.stats.distanceTravelled;
 end
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-function Checkpoints:draw()
 
-	if not isRaceMode() then return end;
+function Checkpoints:onNewCheckpoint() 
+	-- if self.beep then playSound("internal/misc/chat"); end
+	local newCheckpoint = {
+		speed = self.speed;
+		cTime = self.raceTime;
+		distance = self.player.stats.distanceTravelled - self.startDistance;
+		}
+	table.insert(self.checkPoints, newCheckpoint);
+	self.lastCheckpointTime = self.raceTime;
+	self.lastCheckpointDistance = newCheckpoint.distance;
+	self.currentCheckpoint = self.currentCheckpoint + 1;
+end
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+function Checkpoints:onFinish() 
+	local newCheckpoint = {
+		speed = self.speed;
+		cTime = self.player.raceTimePrevious;
+		distance = self.player.stats.distanceTravelled - self.startDistance;
+		}
+	table.insert(self.checkPoints, newCheckpoint);
+end
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+function Checkpoints:drawTable()
+	if self.hideDuringRun and self.player.raceActive then return end;
 	
 	local redColor = Color(230, 0, 0, self.alpha*255);
 	local greenColor = Color(0, 230, 0, self.alpha*255);
 	local whiteColor = Color(230, 230, 230, self.alpha*255);
-	
-	local deltaError = false;
-	
-	local storedCheckpoints = {};
-	if self.userData.maps["m_" .. world.mapName] ~= nil then storedCheckpoints = self.userData.maps["m_" .. world.mapName].checkPoints; end
-	local store = widgetGetConsoleVariable("store");
-	local showSpeed = (widgetGetConsoleVariable("showSpeed") ~= 0);
-	local showDistance = (widgetGetConsoleVariable("showDistance") ~= 0);
-	local useTotal = (widgetGetConsoleVariable("useTotal") ~= 0);
-	local showDelta = (widgetGetConsoleVariable("showDelta") ~= 0);
-	local hideDuringRun = (widgetGetConsoleVariable("hideDuringRun") ~= 0);
-	local beep = (widgetGetConsoleVariable("beep") ~= 0);
-	local strictMessages = (widgetGetConsoleVariable("strictMessages") ~= 0);
-	
-	local autoSave = (widgetGetConsoleVariable("autoSave") ~= 0);
-	
-	-- Autosave
-	if autoSave and self.raceState == C_RACE_STATE_JUST_FINISHED then
-		if storedCheckpoints[#self.checkPoints] == nil or self.checkPoints[#self.checkPoints].cTime < storedCheckpoints[#self.checkPoints].cTime then
-			store = 1;
-		end
-	end
-	
-	-- Save
-	if store ~= 0 then
-		widgetSetConsoleVariable("store","0");
-		
-		self.userData.maps["m_" .. world.mapName] = { checkPoints = self.checkPoints }
-		saveUserData(self.userData);
-		self.userData = loadUserData();
-	end	
-	
-	local player = getPlayer()
-	if not player then return end;
-    local speed = math.ceil(player.speed)
-	local raceTime = player.raceTimeCurrent;
-	local currentCheckpointTime = {
-		rel = raceTime - self.lastCheckpointTime; 
-		abs = raceTime;
-		}
-		
-	local currentCheckpointDistance = {
-	rel = player.stats.distanceTravelled - self.startDistance - self.lastCheckpointDistance;
-	abs = player.stats.distanceTravelled - self.startDistance;
-}
-	-- Check for player switch
-	if self.lastPlayer ~= player.name then
-		self.checkPoints = { };
-		self.currentCheckpoint = 0;
-		self.lastCheckpointTime = 0;
-		self.lastCheckpointDistance = 0;
-		self.startDistance= player.stats.distanceTravelled;
-		self.lastPlayer = player.name;
-		self.raceState = C_RACE_STATE_PRERUN;
-	end
-	
-	
-	-- Check which state we are in
-	if not player.raceActive then
-		if self.raceState == C_RACE_STATE_RUN then
-			self.raceState = C_RACE_STATE_FINISHED;
-			-- Check for finish log entry (this part is taken from official RaceRecords widget)
-			local logCount = 0;
-			for k, v in pairs(log) do
-				logCount = logCount + 1;
-			end
-			
-			-- read log messages
-			for i = 1, logCount do
-				local logEntry = log[i];
-
-				-- only read newer entries
-				if self.lastLogIdRead < logEntry.id then
-					self.lastLogIdRead = logEntry.id;
-					
-					if logEntry.type == LOG_TYPE_RACEEVENT and logEntry.racePlayerIndex == player.index then
-
-						-- race finished? 
-						if (logEntry.raceEvent == RACE_EVENT_FINISH) or (logEntry.raceEvent == RACE_EVENT_FINISHANDWASRECORD) then
-							self.raceState = C_RACE_STATE_JUST_FINISHED;
-						end
-
-					end
-				end
-			end	
-		else
-			self.raceState = C_RACE_STATE_FINISHED;
-		end
-	elseif self.raceState == C_RACE_STATE_FINISHED then
-		self.checkPoints = { };
-		self.currentCheckpoint = 0;
-		self.lastCheckpointTime = 0;
-		self.lastCheckpointDistance = 0;
-		self.startDistance= player.stats.distanceTravelled;
-		self.raceState = C_RACE_STATE_RUN;
-	end
-	
-	-- Reached new Checkpoint?
-	if string.len(message.text) > 0 and self.raceState == C_RACE_STATE_RUN then
-		if (message.text == "Checkpoint " .. self.currentCheckpoint+1) or (string.find(message.text, "^Checkpoint " .. self.currentCheckpoint+1 .. "[^%d]")~=nil) or (not strictMessages) then
-			if (message.text ~= self.lastMessage) then
-				
-				if beep then playSound("internal/misc/chat"); end
-				local newCheckpoint = {
-					speed = speed;
-					cTime = raceTime;
-					distance = player.stats.distanceTravelled - self.startDistance;
-					}
-				table.insert(self.checkPoints, newCheckpoint);
-				self.lastCheckpointTime = raceTime;
-				self.lastCheckpointDistance = newCheckpoint.distance;
-				self.currentCheckpoint = self.currentCheckpoint + 1;
-			end
-		end
-	
-	end
-	
-	self.lastMessage = message.text;
-	
-	-- Add last Checkpoint when finished
-	if self.raceState == C_RACE_STATE_JUST_FINISHED then
-	  local newCheckpoint = {
-			speed = speed;
-			cTime = player.raceTimePrevious;
-			distance = player.stats.distanceTravelled - self.startDistance;
-			}
-		table.insert(self.checkPoints, newCheckpoint);
-	end
-	
-	
-    -- Actual Drawing
-    if not shouldShowHUD() then return end;
-	if hideDuringRun and player.raceActive then return end;
+	local blackColor = Color(0,0,0, self.alpha*255);
 	
 	local frameColor = Color(0,0,0,self.alpha*128);
     local frameWidth = 500;
@@ -214,19 +122,21 @@ function Checkpoints:draw()
 	local colDistanceDeltaWidth = 110;
 	local col3width = 150;
 	
+	local deltaError = false;
+	
 	frameWidth = colTimeWidth;
-	if showDelta then 
+	if self.showDelta then 
 			frameWidth=frameWidth+colTimeDeltaWidth;
 		end
-	if showSpeed then 
+	if self.showSpeed then 
 		frameWidth=frameWidth+colSpeedWidth;
-		if showDelta then 
+		if self.showDelta then 
 			frameWidth=frameWidth+colSpeedDeltaWidth;
 		end
 	end
-	if showDistance then 
+	if self.showDistance then 
 		frameWidth=frameWidth+colDistanceWidth; 
-		if showDelta then 
+		if self.showDelta then 
 			frameWidth=frameWidth+colDistanceDeltaWidth;
 		end
 	end
@@ -249,9 +159,9 @@ function Checkpoints:draw()
 	nvgFontBlur(0);
 	nvgFillColor(fontColor);
 	
-	local newSpeed = speed;
-	local newTime = currentCheckpointTime.abs;
-	local newDistance = currentCheckpointDistance.abs;
+	local newSpeed = self.speed;
+	local newTime = self.currentCheckpointTime.abs;
+	local newDistance = self.currentCheckpointDistance.abs;
 	
 	local oldSpeed = 0; 
 	local oldTime = 0;
@@ -263,48 +173,57 @@ function Checkpoints:draw()
 	
 	local tmpText = "";
 	
-	if storedCheckpoints[self.currentCheckpoint+1] ~= nil then
-		oldSpeed = storedCheckpoints[self.currentCheckpoint+1].speed;
-		oldTime = storedCheckpoints[self.currentCheckpoint+1].cTime;
-		oldDistance = storedCheckpoints[self.currentCheckpoint+1].distance;
+	if self.storedCheckpoints[self.currentCheckpoint+1] ~= nil then
+		oldSpeed = self.storedCheckpoints[self.currentCheckpoint+1].speed;
+		oldTime = self.storedCheckpoints[self.currentCheckpoint+1].cTime;
+		oldDistance = self.storedCheckpoints[self.currentCheckpoint+1].distance;
 	else
 		deltaError = true;
 	end
 	
-	if useTotal == false then
-		newTime = currentCheckpointTime.abs - self.lastCheckpointTime;
-		newDistance = currentCheckpointDistance.abs - self.lastCheckpointDistance;
+	if self.useTotal == false then
+		newTime = self.currentCheckpointTime.abs - self.lastCheckpointTime;
+		newDistance = self.currentCheckpointDistance.abs - self.lastCheckpointDistance;
 		
-		if self.currentCheckpoint > 0 and storedCheckpoints[self.currentCheckpoint] ~= nil then
-		oldTime = oldTime - storedCheckpoints[self.currentCheckpoint].cTime;
-		oldDistance = oldDistance - storedCheckpoints[self.currentCheckpoint].distance;
+		if self.currentCheckpoint > 0 and self.storedCheckpoints[self.currentCheckpoint] ~= nil then
+		oldTime = oldTime - self.storedCheckpoints[self.currentCheckpoint].cTime;
+		oldDistance = oldDistance - self.storedCheckpoints[self.currentCheckpoint].distance;
 		end
 	end
 	
 	deltaTime = newTime - oldTime;
 	deltaDistance = newDistance - oldDistance;
 	deltaSpeed = newSpeed - oldSpeed;
-	
-	if player.raceActive == false or self.raceState == C_RACE_STATE_PRERUN then
+		
+	nvgFontBlur(2);
+	nvgFillColor(blackColor);
+	nvgText(0, -1*fontSize, "(Kawumm)");
+	nvgText(0, -1*fontSize, "(Kawumm)");
+	nvgText(0, -1*fontSize, "(Kawumm)");
+	nvgFontBlur(0);	
+	nvgFillColor(fontColor);
+	nvgText(0, -1*fontSize, "(Kawumm)");
+		
+	if self.player.raceActive == false or self.raceState == C_RACE_STATE_PRERUN then
 		nvgText(0, (0)*fontSize, "---"); 
-		if showDelta then
+		if self.showDelta then
 			xOffset = xOffset + colTimeDeltaWidth;
 			nvgText(xOffset, (0)*fontSize, "(---)");  
 		end
 		xOffset = xOffset + colSpeedWidth;
 		
-		if showSpeed then 
+		if self.showSpeed then 
 			nvgText(xOffset, (0)*fontSize, "---"); 
-			if showDelta then
+			if self.showDelta then
 				xOffset = xOffset + colSpeedDeltaWidth;
 				nvgText(xOffset, (0)*fontSize, "(---)");  
 			end
 			xOffset = xOffset + colDistanceWidth; 
 		end
 		
-		if showDistance then 
+		if self.showDistance then 
 			nvgText(xOffset, (0)*fontSize, "---"); 
-			if showDelta then
+			if self.showDelta then
 				xOffset = xOffset + colDistanceDeltaWidth;
 				nvgText(xOffset, (0)*fontSize, "(---)");  
 			end
@@ -313,7 +232,7 @@ function Checkpoints:draw()
 		end
 	else
 		nvgText(0, (0)*fontSize, FormatTimeToDecimalTime(newTime)); 
-		if showDelta then
+		if self.showDelta then
 			xOffset = xOffset + colTimeDeltaWidth;
 			
 			if deltaError then 
@@ -327,9 +246,9 @@ function Checkpoints:draw()
 		
 		xOffset = xOffset + colSpeedWidth;
 		
-		if showSpeed then 
+		if self.showSpeed then 
 			nvgText(xOffset, (0)*fontSize, newSpeed .. "ups");
-			if showDelta then
+			if self.showDelta then
 				xOffset = xOffset + colSpeedDeltaWidth;
 				
 				if deltaError then 
@@ -343,10 +262,10 @@ function Checkpoints:draw()
 			xOffset = xOffset + colDistanceWidth; 
 		end
 		
-		if showDistance then 
+		if self.showDistance then 
 			nvgText(xOffset, (0)*fontSize, newDistance .. "u"); 
 			
-			if showDelta then
+			if self.showDelta then
 				xOffset = xOffset + colDistanceDeltaWidth;
 				
 				if deltaError then 
@@ -365,6 +284,7 @@ function Checkpoints:draw()
 	deltaError = false;
 	
 	xOffset = 0;
+	local yOffset = 0;
 	
 	for i, check in ipairs(self.checkPoints) do
 	--	check.speed;
@@ -381,10 +301,10 @@ function Checkpoints:draw()
 	local deltaTime = 0;
 	local deltaDistance = 0;
 	
-	if storedCheckpoints[i] ~= nil then
-		oldSpeed = storedCheckpoints[i].speed;
-		oldTime = storedCheckpoints[i].cTime;
-		oldDistance = storedCheckpoints[i].distance;
+	if self.storedCheckpoints[i] ~= nil then
+		oldSpeed = self.storedCheckpoints[i].speed;
+		oldTime = self.storedCheckpoints[i].cTime;
+		oldDistance = self.storedCheckpoints[i].distance;
 	else
 		deltaError = true;
 	end
@@ -393,12 +313,15 @@ function Checkpoints:draw()
 	local distColor = whiteColor;
 	local speedColor = whiteColor;
 	
-	if useTotal == false and i > 1 then
+	-- yOffset = #self.checkPoints-i+1; (old ordering)
+	yOffset=i;
+	
+	if self.useTotal == false and i > 1 then
 		newTime = check.cTime - self.checkPoints[i-1].cTime;
 		newDistance = check.distance - self.checkPoints[i-1].distance;
-		if storedCheckpoints[i-1] ~= nil then
-			oldTime = oldTime - storedCheckpoints[i-1].cTime;
-			oldDistance = oldDistance - storedCheckpoints[i-1].distance;
+		if self.storedCheckpoints[i-1] ~= nil then
+			oldTime = oldTime - self.storedCheckpoints[i-1].cTime;
+			oldDistance = oldDistance - self.storedCheckpoints[i-1].distance;
 		end
 	end
 	
@@ -412,9 +335,9 @@ function Checkpoints:draw()
 
 	
 		nvgFillColor(whiteColor);
-		nvgText(0, (#self.checkPoints-i+1)*fontSize, i .. ": " .. FormatTimeToDecimalTime(newTime)); 
+		nvgText(0, (yOffset)*fontSize, i .. ": " .. FormatTimeToDecimalTime(newTime)); 
 		
-		if showDelta then
+		if self.showDelta then
 			nvgFillColor(timeColor);
 			xOffset = xOffset + colTimeDeltaWidth;
 			if deltaError then 
@@ -423,16 +346,16 @@ function Checkpoints:draw()
 			else
 				tmpText ="(" .. Checkpoints:FormatTimeDelta(deltaTime) .. ")";
 			end
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
+			nvgText(xOffset, (yOffset)*fontSize, tmpText);  
 		end
 		
 		xOffset = xOffset + colSpeedWidth;
 		
-		if showSpeed then 
+		if self.showSpeed then 
 			nvgFillColor(whiteColor);
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, newSpeed .. "ups"); 
+			nvgText(xOffset, (yOffset)*fontSize, newSpeed .. "ups"); 
 			
-			if showDelta then
+			if self.showDelta then
 				nvgFillColor(speedColor);
 				xOffset = xOffset + colSpeedDeltaWidth;
 				if deltaError then 
@@ -443,17 +366,17 @@ function Checkpoints:draw()
 				else 
 					tmpText = "(+" .. deltaSpeed.. ")" 
 				end
-				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
+				nvgText(xOffset, (yOffset)*fontSize, tmpText);  
 			end
 			
 			xOffset = xOffset + colDistanceWidth; 
 		end
 		
-		if showDistance then 
+		if self.showDistance then 
 			nvgFillColor(whiteColor);
-			nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, newDistance .. "u"); 
+			nvgText(xOffset, (yOffset)*fontSize, newDistance .. "u"); 
 			
-			if showDelta then
+			if self.showDelta then
 				nvgFillColor(distColor);
 				xOffset = xOffset + colDistanceDeltaWidth;
 				
@@ -465,7 +388,7 @@ function Checkpoints:draw()
 				else 
 					tmpText = "(+" .. deltaDistance.. ")" 
 				end
-				nvgText(xOffset, (#self.checkPoints-i+1)*fontSize, tmpText);  
+				nvgText(xOffset, (yOffset)*fontSize, tmpText);  
 			end
 			
 			xOffset = xOffset + col3width;
@@ -474,5 +397,122 @@ function Checkpoints:draw()
 	deltaError = false;
 	xOffset= 0;
 	end
+end
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
+function Checkpoints:draw()
+
+	if not isRaceMode() then return end;
+
+	
+	
+
+	if self.userData.maps["m_" .. world.mapName] ~= nil then self.storedCheckpoints = self.userData.maps["m_" .. world.mapName].checkPoints; end
+	
+	local store = widgetGetConsoleVariable("store");
+	
+	self.showSpeed = (widgetGetConsoleVariable("showSpeed") ~= 0);
+	self.showDistance = (widgetGetConsoleVariable("showDistance") ~= 0);
+	self.useTotal = (widgetGetConsoleVariable("useTotal") ~= 0);
+	self.showDelta = (widgetGetConsoleVariable("showDelta") ~= 0);
+	self.hideDuringRun = (widgetGetConsoleVariable("hideDuringRun") ~= 0);
+	self.beep = (widgetGetConsoleVariable("beep") ~= 0);
+	self.strictMessages = (widgetGetConsoleVariable("strictMessages") ~= 0);
+	self.autoSave = (widgetGetConsoleVariable("autoSave") ~= 0);
+	
+	-- Autosave
+	if self.autoSave and self.raceState == C_RACE_STATE_JUST_FINISHED then
+		if self.storedCheckpoints[#self.checkPoints] == nil or self.checkPoints[#self.checkPoints].cTime < self.storedCheckpoints[#self.checkPoints].cTime then
+			store = 1;
+		end
+	end
+	
+	-- Save
+	if store ~= 0 then
+		widgetSetConsoleVariable("store","0");
+		
+		self.userData.maps["m_" .. world.mapName] = { checkPoints = self.checkPoints, kaduudle = 435 }
+		saveUserData(self.userData);
+		self.userData = loadUserData();
+	end	
+	
+	self.player = getPlayer()
+	if not self.player then return end;
+    self.speed = math.ceil(self.player.speed)
+	self.raceTime = self.player.raceTimeCurrent;
+	self.currentCheckpointTime = {
+		rel = self.raceTime - self.lastCheckpointTime; 
+		abs = self.raceTime;
+		}
+		
+	self.currentCheckpointDistance = {
+	rel = self.player.stats.distanceTravelled - self.startDistance - self.lastCheckpointDistance;
+	abs = self.player.stats.distanceTravelled - self.startDistance;
+}
+	-- Check for player switch
+	if self.lastPlayer ~= self.player.name then
+		Checkpoints:reset();
+		self.lastPlayer = self.player.name;
+		self.raceState = C_RACE_STATE_PRERUN;
+	end
+	
+	
+	-- Check which state we are in
+	if not self.player.raceActive then
+		if self.raceState == C_RACE_STATE_RUN then
+			self.raceState = C_RACE_STATE_FINISHED;
+			-- Check for finish log entry (this part is taken from official RaceRecords widget)
+			local logCount = 0;
+			for k, v in pairs(log) do
+				logCount = logCount + 1;
+			end
+			
+			-- read log messages
+			for i = 1, logCount do
+				local logEntry = log[i];
+
+				-- only read newer entries
+				if self.lastLogIdRead < logEntry.id then
+					self.lastLogIdRead = logEntry.id;
+					
+					if logEntry.type == LOG_TYPE_RACEEVENT and logEntry.racePlayerIndex == self.player.index then
+
+						-- race finished? 
+						if (logEntry.raceEvent == RACE_EVENT_FINISH) or (logEntry.raceEvent == RACE_EVENT_FINISHANDWASRECORD) then
+							self.raceState = C_RACE_STATE_JUST_FINISHED;
+						end
+
+					end
+				end
+			end	
+		else
+			self.raceState = C_RACE_STATE_FINISHED;
+		end
+	elseif self.raceState == C_RACE_STATE_FINISHED then
+		Checkpoints:reset();
+		self.raceState = C_RACE_STATE_RUN;
+	end
+	
+	-- Reached new Checkpoint?
+	if string.len(message.text) > 0 and self.raceState == C_RACE_STATE_RUN then
+		if (message.text == "Checkpoint " .. self.currentCheckpoint+1) or (string.find(message.text, "^Checkpoint " .. self.currentCheckpoint+1 .. "[^%d]")~=nil) or (not self.strictMessages) then
+			if (message.text ~= self.lastMessage) then
+				Checkpoints:onNewCheckpoint();
+			end
+		end
+	
+	end
+	
+	self.lastMessage = message.text;
+	
+	-- Add last Checkpoint when finished
+	if self.raceState == C_RACE_STATE_JUST_FINISHED then
+		Checkpoints:onFinish();
+	end
+	
+	
+    -- Actual Drawing
+    if not shouldShowHUD() then return end;
+	Checkpoints:drawTable();
 end
