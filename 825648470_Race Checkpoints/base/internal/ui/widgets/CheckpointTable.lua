@@ -111,14 +111,16 @@ function CheckpointTable:draw()
 	deltaSpeed = newSpeed - oldSpeed;
 		
 	tmpText = CheckCore.player.name .. " vs. (" .. CheckCore.activeStoredName .. ")";
+	-- tmpText = CheckCore.player.steamId .. " vs. (" .. CheckCore.activeStoredName .. ")"; Maybe change this to steamId later
+	
 	nvgFontBlur(2);
 	nvgFillColor(blackColor);
-	nvgText(100, -1*fontSize, tmpText);
-	nvgText(100, -1*fontSize, tmpText);
-	nvgText(100, -1*fontSize, tmpText);
+	nvgText(frameWidth-colTimeWidth, -1*fontSize, tmpText);
+	nvgText(frameWidth-colTimeWidth, -1*fontSize, tmpText);
+	nvgText(frameWidth-colTimeWidth, -1*fontSize, tmpText);
 	nvgFontBlur(0);	
 	nvgFillColor(fontColor);
-	nvgText(100, -1*fontSize, tmpText);
+	nvgText(frameWidth-colTimeWidth, -1*fontSize, tmpText);
 		
 	if CheckCore.player.raceActive == false or CheckCore.raceState == C_RACE_STATE_PRERUN then
 		nvgText(0, (0)*fontSize, "---"); 

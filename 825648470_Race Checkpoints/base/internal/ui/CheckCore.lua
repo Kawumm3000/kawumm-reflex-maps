@@ -11,7 +11,7 @@ require "base/internal/ui/reflexcore"
 CheckCore =
 {
 
-	canHide = true ; 
+	canHide = false; 
 	canPosition = false;
 	
 	scrollingUsed = false;
@@ -70,6 +70,7 @@ function CheckCore:initialize()
 	CheckSetDefaultValue(self.userData, "strictMessages", "boolean", true);
 	CheckSetDefaultValue(self.userData, "autoSave", "boolean", true);
 	CheckSetDefaultValue(self.userData, "saveToConfig", "boolean", true);
+	CheckSetDefaultValue(self.userData, "active", "boolean", true);
 	CheckSetDefaultValue(self.userData, "maps", "table", {});
 end
 
@@ -105,6 +106,8 @@ end
 
 function CheckCore:flushData()
 	self.userData.maps = { }
+	saveUserData(self.userData);
+	
 	CheckCore:onMapChange()
 end
 
@@ -198,7 +201,7 @@ end
 
 function CheckCore:draw()
 
-	if not isRaceMode() then return end;
+	if not isRaceMode() or not self.userData.active then return end;
 	
 	self.player = getPlayer()
 	if not self.player then return end;
@@ -273,7 +276,7 @@ function CheckCore:draw()
 				checkpoints=newCheckpoints,
 			}
 			table.insert(self.allStored,newStoreSlot);
-			if self._activeStoredIndex==0 then
+			if self._activeStoredIndex==0 or not self.scrollingUsed then
 				self.activeStoredName = self.player.name;
 				self.activeStored = newStoreSlot.checkpoints;
 				self._activeStoredIndex = #self.allStored;
@@ -391,7 +394,9 @@ function CheckCore:drawOptions(x, y, intensity)
 	optargs.intensity = intensity;
 	 
 	local user = self.userData;
-	 
+	user.active = ui2RowCheckbox(x, y, WIDGET_PROPERTIES_COL_INDENT, "Enabled", user.active, optargs);
+	y = y + 60;
+	
 	user.autoSave = ui2RowCheckbox(x, y, WIDGET_PROPERTIES_COL_INDENT, "Auto save faster runs", user.autoSave, optargs);
 	y = y + 60;
 	 

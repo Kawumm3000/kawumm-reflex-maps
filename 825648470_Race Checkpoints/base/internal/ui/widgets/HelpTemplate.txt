@@ -1,0 +1,28 @@
+-- Checkpoint Template widget by Kawumm
+
+MyCheckpointWidget = {canHide = true ;canPosition = true;}
+
+function MyCheckpointWidget:initialize()
+end
+
+function MyCheckpointWidget:draw()
+	if not isRaceMode() then return end;
+end
+
+function MyCheckpointWidget:onRaceStart() 
+	-- Put stuff here that happens when active player leaves the start brush
+end
+
+function MyCheckpointWidget:onNewCheckpoint()
+	-- Put stuff here that happens after a new checkpoint is reached and added 
+end
+
+function MyCheckpointWidget:onFinish()
+	-- Put stuff here that happens after a last checkpoint (which is the finish line) is reached and added 
+end
+
+
+registerWidget("MyCheckpointWidget");
+
+-- This registers your widget with the checkpoint backend so the above functions get called accordingly.
+Checkpoints:registerWidget("MyCheckpointWidget");

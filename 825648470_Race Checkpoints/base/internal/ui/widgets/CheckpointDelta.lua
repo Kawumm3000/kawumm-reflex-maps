@@ -68,11 +68,15 @@ function CheckpointDelta:onNewCheckpoint()
 			self.color = Color(230, 0, 0, self.alpha*255);
 		end
 	else
-		self.text = "(---)";
+		self.text = "---";
 		self.color = Color(230, 230, 230, self.alpha*255);
 	end
 	
 	self.visibleTime=2;
+end
+
+function CheckpointDelta:onFinish()
+	CheckpointDelta:onNewCheckpoint()
 end
 
 registerWidget("CheckpointDelta");
