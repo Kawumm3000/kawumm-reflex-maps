@@ -1,22 +1,21 @@
 --------------------------------------------------------------------------------
--- Checkpoint Message by Kawumm
+-- Checkpoint Delta Time by Kawumm
 --------------------------------------------------------------------------------
 
 require "base/internal/ui/reflexcore"
+require "base/internal/ui/CheckCore"
 
-CheckpointMessage =
+CheckpointDelta =
 {
 	alpha = 1;
 	visibleTime = 0;
 	color = Color(230,230,230,255);
 	text = "";
 };
-registerWidget("CheckpointMessage");
-Checkpoints:registerWidget("CheckpointMessage");
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-function CheckpointMessage:draw()
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+function CheckpointDelta:draw()
     if not shouldShowHUD() then return end;
 	if not isRaceMode() then return end;
 
@@ -55,14 +54,14 @@ function CheckpointMessage:draw()
 	nvgText(0, -1, self.text);
 end
 
-function CheckpointMessage:onNewCheckpoint()
+function CheckpointDelta:onNewCheckpoint()
 	local newTime = 0
 	local oldTime = 0;
 	
-	if Checkpoints.storedCheckpoints[#Checkpoints.checkpoints] ~= nil and Checkpoints.checkpoints[#Checkpoints.checkpoints] ~=nil then
-		newTime = Checkpoints.checkpoints[#Checkpoints.checkpoints].cTime;
-		oldTime = Checkpoints.storedCheckpoints[#Checkpoints.checkpoints].cTime;
-		self.text = Checkpoints:FormatTimeDelta(newTime-oldTime);
+	if CheckCore.activeStored[#CheckCore.checkpoints] ~= nil and CheckCore.checkpoints[#CheckCore.checkpoints] ~=nil then
+		newTime = CheckCore.checkpoints[#CheckCore.checkpoints].cTime;
+		oldTime = CheckCore.activeStored[#CheckCore.checkpoints].cTime;
+		self.text = CheckCore:FormatTimeDelta(newTime-oldTime);
 		if newTime-oldTime <= 0 then
 			self.color = Color(0, 230, 0, self.alpha*255);
 		else
@@ -75,3 +74,6 @@ function CheckpointMessage:onNewCheckpoint()
 	
 	self.visibleTime=2;
 end
+
+registerWidget("CheckpointDelta");
+CheckCore:registerWidget("CheckpointDelta");

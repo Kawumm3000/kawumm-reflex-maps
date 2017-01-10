@@ -1,4 +1,6 @@
 -- CheckpointTable by Kawumm
+require "base/internal/ui/CheckCore"
+require "base/internal/ui/reflexcore"
 
 CheckpointTable = {canHide = true ; canPosition = true; alpha=1}
 
@@ -16,7 +18,7 @@ function CheckpointTable:draw()
 
 	local user = self.userData;
 	
-	if (user.hideDuringRun and self.player.raceActive) or not shouldShowHUD() or not isRaceMode() then return end;
+	if (user.hideDuringRun and self.player.raceActive) or not shouldShowHUD() or not isRaceMode() or CheckCore.player == nil then return end;
 	
 	local redColor = Color(230, 0, 0, self.alpha*255);
 	local greenColor = Color(0, 230, 0, self.alpha*255);
@@ -55,7 +57,7 @@ function CheckpointTable:draw()
 	end
 
     nvgBeginPath();
-    nvgRoundedRect(-colTimeWidth-20, -frameHeight/2, frameWidth+40, (#Checkpoints.checkpoints+1)*frameHeight*1.15, 5);
+    nvgRoundedRect(-colTimeWidth-20, -frameHeight/2, frameWidth+40, (#CheckCore.checkpoints+1)*frameHeight*1.15, 5);
     nvgFillColor(frameColor); 
     nvgFill();
 
@@ -72,9 +74,9 @@ function CheckpointTable:draw()
 	nvgFontBlur(0);
 	nvgFillColor(fontColor);
 	
-	local newSpeed = Checkpoints.currentSpeed;
-	local newTime = Checkpoints.currentSector.timeTot;
-	local newDistance = Checkpoints.currentSector.distanceTot;
+	local newSpeed = CheckCore.currentSpeed;
+	local newTime = CheckCore.currentSector.timeTot;
+	local newDistance = CheckCore.currentSector.distanceTot;
 	
 	local oldSpeed = 0; 
 	local oldTime = 0;
@@ -86,21 +88,21 @@ function CheckpointTable:draw()
 	
 	local tmpText = "";
 	
-	if Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo+1] ~= nil then
-		oldSpeed = Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo+1].speed;
-		oldTime = Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo+1].cTime;
-		oldDistance = Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo+1].distance;
+	if CheckCore.activeStored[CheckCore.lastCheckpointNo+1] ~= nil then
+		oldSpeed = CheckCore.activeStored[CheckCore.lastCheckpointNo+1].speed;
+		oldTime = CheckCore.activeStored[CheckCore.lastCheckpointNo+1].cTime;
+		oldDistance = CheckCore.activeStored[CheckCore.lastCheckpointNo+1].distance;
 	else
 		deltaError = true;
 	end
 	
 	if user.useTotal == false then
-		newTime = Checkpoints.currentSector.timeRel;
-		newDistance = Checkpoints.currentSector.distanceRel;
+		newTime = CheckCore.currentSector.timeRel;
+		newDistance = CheckCore.currentSector.distanceRel;
 		
-		if Checkpoints.lastCheckpointNo > 0 and Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo] ~= nil then
-		oldTime = oldTime - Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo].cTime;
-		oldDistance = oldDistance - Checkpoints.storedCheckpoints[Checkpoints.lastCheckpointNo].distance;
+		if CheckCore.lastCheckpointNo > 0 and CheckCore.activeStored[CheckCore.lastCheckpointNo] ~= nil then
+		oldTime = oldTime - CheckCore.activeStored[CheckCore.lastCheckpointNo].cTime;
+		oldDistance = oldDistance - CheckCore.activeStored[CheckCore.lastCheckpointNo].distance;
 		end
 	end
 	
@@ -108,16 +110,17 @@ function CheckpointTable:draw()
 	deltaDistance = newDistance - oldDistance;
 	deltaSpeed = newSpeed - oldSpeed;
 		
+	tmpText = CheckCore.player.name .. " vs. (" .. CheckCore.activeStoredName .. ")";
 	nvgFontBlur(2);
 	nvgFillColor(blackColor);
-	nvgText(0, -1*fontSize, "(Kawumm)");
-	nvgText(0, -1*fontSize, "(Kawumm)");
-	nvgText(0, -1*fontSize, "(Kawumm)");
+	nvgText(100, -1*fontSize, tmpText);
+	nvgText(100, -1*fontSize, tmpText);
+	nvgText(100, -1*fontSize, tmpText);
 	nvgFontBlur(0);	
 	nvgFillColor(fontColor);
-	nvgText(0, -1*fontSize, "(Kawumm)");
+	nvgText(100, -1*fontSize, tmpText);
 		
-	if Checkpoints.player.raceActive == false or Checkpoints.raceState == C_RACE_STATE_PRERUN then
+	if CheckCore.player.raceActive == false or CheckCore.raceState == C_RACE_STATE_PRERUN then
 		nvgText(0, (0)*fontSize, "---"); 
 		if user.showDelta then
 			xOffset = xOffset + colTimeDeltaWidth;
@@ -151,7 +154,7 @@ function CheckpointTable:draw()
 			if deltaError then 
 				tmpText ="(---)"
 			else
-				tmpText ="(" .. Checkpoints:FormatTimeDelta(deltaTime) .. ")";
+				tmpText ="(" .. CheckCore:FormatTimeDelta(deltaTime) .. ")";
 			end
 			
 			nvgText(xOffset, (0)*fontSize, tmpText);  
@@ -199,7 +202,7 @@ function CheckpointTable:draw()
 	xOffset = 0;
 	local yOffset = 0;
 	
-	for i, check in ipairs(Checkpoints.checkpoints) do
+	for i, check in ipairs(CheckCore.checkpoints) do
 		--	check.speed;
 			--check.cTime;
 		local newSpeed = check.speed;
@@ -214,10 +217,10 @@ function CheckpointTable:draw()
 		local deltaTime = 0;
 		local deltaDistance = 0;
 		
-		if Checkpoints.storedCheckpoints[i] ~= nil then
-			oldSpeed = Checkpoints.storedCheckpoints[i].speed;
-			oldTime = Checkpoints.storedCheckpoints[i].cTime;
-			oldDistance = Checkpoints.storedCheckpoints[i].distance;
+		if CheckCore.activeStored[i] ~= nil then
+			oldSpeed = CheckCore.activeStored[i].speed;
+			oldTime = CheckCore.activeStored[i].cTime;
+			oldDistance = CheckCore.activeStored[i].distance;
 		else
 			deltaError = true;
 		end
@@ -226,15 +229,15 @@ function CheckpointTable:draw()
 		local distColor = whiteColor;
 		local speedColor = whiteColor;
 		
-		-- yOffset = #Checkpoints.checkpoints-i+1; (old ordering)
+		-- yOffset = #CheckCore.checkpoints-i+1; (old ordering)
 		yOffset=i;
 		
 		if user.useTotal == false and i > 1 then
-			newTime = check.cTime - Checkpoints.checkpoints[i-1].cTime;
-			newDistance = check.distance - Checkpoints.checkpoints[i-1].distance;
-			if Checkpoints.storedCheckpoints[i-1] ~= nil then
-				oldTime = oldTime - Checkpoints.storedCheckpoints[i-1].cTime;
-				oldDistance = oldDistance - Checkpoints.storedCheckpoints[i-1].distance;
+			newTime = check.cTime - CheckCore.checkpoints[i-1].cTime;
+			newDistance = check.distance - CheckCore.checkpoints[i-1].distance;
+			if CheckCore.activeStored[i-1] ~= nil then
+				oldTime = oldTime - CheckCore.activeStored[i-1].cTime;
+				oldDistance = oldDistance - CheckCore.activeStored[i-1].distance;
 			end
 		end
 		
@@ -257,7 +260,7 @@ function CheckpointTable:draw()
 					nvgFillColor(whiteColor);
 					tmpText ="(---)"
 				else
-					tmpText ="(" .. Checkpoints:FormatTimeDelta(deltaTime) .. ")";
+					tmpText ="(" .. CheckCore:FormatTimeDelta(deltaTime) .. ")";
 				end
 				nvgText(xOffset, (yOffset)*fontSize, tmpText);  
 			end
@@ -344,4 +347,4 @@ function CheckpointTable:drawOptions(x, y, intensity)
 end
 
 registerWidget("CheckpointTable");
-Checkpoints:registerWidget("CheckpointTable");
+CheckCore:registerWidget("CheckpointTable");
