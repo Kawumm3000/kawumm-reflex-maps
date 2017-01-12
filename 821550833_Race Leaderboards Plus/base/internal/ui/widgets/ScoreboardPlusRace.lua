@@ -1,9 +1,8 @@
 --------------------------------------------------------------------------------
--- This is the original Reflex 0.47.5 Scoreboard widget, cloned and modified by Kawumm to add leaderboards for race mode
+-- This is the original Reflex 0.48.0 ScoreboardPlusRace widget, cloned and modified by Kawumm to add leaderboards for race mode
 --------------------------------------------------------------------------------
 
 require "base/internal/ui/reflexcore"
-require "LeaderboardHelpers"
 
 ScoreboardPlusRace =
 {
@@ -22,6 +21,8 @@ local colBackground = Color(0,0,0,160);
 local colBorder = Color(150, 150, 150, 150);
 local alphaFade = 150;
 local padx = 15;
+
+local RATING_CHANGE_TIME = 7
 
 local weaponStatsOffsetX =
 {
@@ -52,11 +53,16 @@ for i = 0, SPARKS_MAX-1 do
 	SparksEmitter.sparks[i].vx = 0;
 	SparksEmitter.sparks[i].vy = 0;
 	SparksEmitter.sparks[i].vr = 0;
+	SparksEmitter.sparks[i].cs = Color(255,255,255,255);
+	SparksEmitter.sparks[i].ce = Color(255,255,255,255);
 end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-function SparksEmitter:addSpark(x, y)
+function SparksEmitter:addSpark(x, y, colStart, colEnd)
+	colStart = colStart or Color(238, 185, 87, 255)
+	colEnd = colEnd or Color(232, 23, 32, 0)
+
 	-- add new spark
 	self.sparks[self.nextIn].x = x;
 	self.sparks[self.nextIn].y = y;
@@ -64,6 +70,8 @@ function SparksEmitter:addSpark(x, y)
 	self.sparks[self.nextIn].vx = math.random(-50, -30);
 	self.sparks[self.nextIn].vy = math.random(-40, 40);
 	self.sparks[self.nextIn].vr = math.random(-2, 2);
+	self.sparks[self.nextIn].cs = colStart;
+	self.sparks[self.nextIn].ce = colEnd;
 	self.sparks[self.nextIn].t = 0;
 	self.nextIn = (self.nextIn + 1) % SPARKS_MAX;
 end
@@ -90,10 +98,10 @@ function SparksEmitter:draw(dt)
 		local s = self.sparks[i];
 		local life = s.t / lifeTime;	-- life goes 0->1 (this it's dead)
 		if life < 1 then
-			c.r = lerp(238, 232, life);
-			c.g = lerp(185, 23, life);
-			c.b = lerp(87, 32, life);
-			c.a = lerp(255, 0, life);
+			c.r = lerp(s.cs.r, s.ce.r, life);
+			c.g = lerp(s.cs.g, s.ce.g, life);
+			c.b = lerp(s.cs.b, s.ce.b, life);
+			c.a = lerp(s.cs.a, s.ce.a, life);
 
 			local scale = math.min(c.a / 256, (255 - c.a) / 4);
 		
@@ -260,6 +268,38 @@ function DrawExperienceBar(ix, iy, iw, ih, experienceBase, experienceGain, exper
 		end
 	end
 end
+	
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+function DrawRatingBar(ix, iy, iw, ih, mmr, mmrBest, mmrBase, mmrNew, optargs)
+	local optargs = optargs or {};
+	local intensity = optargs.intensity or 1;
+
+	local r = getRatingInfo(mmr, mmrBest)
+
+	-- slot
+	nvgBeginPath();
+	nvgRoundedRect(ix, iy, iw, ih, 2);
+	nvgFillColor(Color(0, 0, 0, 255*intensity));
+	nvgFill();
+
+	-- rating bar
+	if r.percentage > 0 then
+		nvgBeginPath();
+		nvgRoundedRect(ix, iy, iw*r.percentage, ih, 2);
+		nvgFillColor(Color(r.col.r, r.col.g, r.col.b, 255*intensity));
+		nvgFill();
+	end
+
+	-- sparks while earning
+	if r.percentage > 0 and mmr ~= mmrBase and mmr ~= mmrNew then
+		if ScoreboardPlusRace.sparkFrame then
+			colStart = Color(r.col.r, r.col.g, r.col.b, 255)
+			colEnd = Color(r.col.r, r.col.g, r.col.b, 0)
+			SparksEmitter:addSpark(ix + iw*r.percentage, iy+ih/2, colStart, colEnd);
+		end
+	end
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -290,6 +330,52 @@ function ProcessExperience(experienceBase, experienceGain)
 	end
 
 	return experience, didLevelUp;
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+local function ProcessMmr(mmr, mmrBest, mmrNew)
+	local mmrCurrent = mmr;
+	local divChanged = false;
+
+	-- show experience gain in post-game screen
+	if world.gameState == GAME_STATE_GAMEOVER then		
+		local secondsGrown = GetSecondsGrown();
+		local growSpeed = 10;									-- ie 10 rating per second
+
+		if mmr < 0 and mmrNew < 0 then
+			growSpeed = 0.3										-- 1 "rating" over 3 seconds
+		end
+
+		-- we've just finished placing, get there in RATING_CHANGE_TIME seconds
+		if mmr < 0 and mmrNew > 0 then
+			growSpeed = math.abs(mmrNew - mmr) / RATING_CHANGE_TIME				-- get there in 7 seconds
+		end
+
+		local function grow(mmrg, seconds)
+			if mmrg < mmrNew then
+				mmrg = math.min(mmrg + growSpeed * seconds, mmrNew)
+			elseif mmrg > mmrNew then
+				mmrg = math.max(mmrg - growSpeed * seconds, mmrNew)
+			end
+			return mmrg
+		end
+
+		-- apply the growth!
+		mmrCurrentLastFrame = grow(mmrCurrent, ScoreboardPlusRace.lastSecondsGrown)
+		mmrCurrent = grow(mmrCurrent, secondsGrown)
+
+		local rLastFrame = getRatingInfo(mmrCurrentLastFrame, mmrBest)
+		local r = getRatingInfo(mmrCurrent, mmrBest)
+		
+		-- did we change div?
+		divChanged = rLastFrame.name ~= r.name
+		if divChanged then
+			playSound("internal/ui/sounds/levelUp");
+		end
+	end
+
+	return mmrCurrent, divChanged
 end
 
 --------------------------------------------------------------------------------
@@ -794,151 +880,6 @@ function ScoreboardPlusRace:drawTrainingStats(x, y, w, isRight, player, isPlayin
 	-- end
 end
 
---edited by Kawumm
-function ScoreboardPlusRace:drawRaceStats(x, y, w, isRight, player, isPlaying)
-	local isTraining = player.state == PLAYER_STATE_INGAME;
-	local h = 368;
-	local iy = y + 24;
-
-	-- gather tokens
-	local tokens = {};
-	local tokensAchieved = 0;
-	if isTraining then
-		for k, pickup in pairs(pickupTimers) do
-			if pickup.type == PICKUP_TYPE_TRAINING_TOKEN then
-				tokens[pickup.tokenIndex] = {};
-				tokens[pickup.tokenIndex].achieved = not pickup.isActive;
-				if tokens[pickup.tokenIndex].achieved then
-					tokensAchieved = tokensAchieved + 1;
-				end
-			end
-		end
-	end
-
-	-- count tokens
-	-- (we do this separately to gather tokens to ensure tokens with same tokenIndex ARE ignored - as that's how the leaderboard recording will work - and this will help visualise to the user there is a problem)
-	local tokensTotal = 0;
-	for k, v in pairs(tokens) do
-		tokensTotal = tokensTotal + 1;
-	end
-	
-	-- tokens
-	drawTinyStat("Tokens", "", x, iy, w, isPlaying, isRight);
-	local ir = 12;
-	local istride = 32;
-	local ix = x + 200 + padx + ir;
-	for k, token in pairs(tokens) do
-		local achieved = token.achieved;
-		nvgFillColor(achieved and Color(232,232,232,255) or Color(70,70,70,255));
-		nvgSvg("internal/items/training_token/training_token", ix, iy, ir);
-		ix = ix + istride;
-	end
-	iy = iy + 24;
-	
-	-- goals
-	local goalText = "-";
-	local goalsDone = 0;
-	local goalCount = 0;
-	if isTraining then
-		for k, v in pairs(goals) do
-			if v.achieved then goalsDone = goalsDone + 1 end;
-			goalCount = goalCount + 1;
-		end
-		goalText = goalsDone .. " / " .. goalCount;
-	end
-	drawTinyStat("Goals", goalText, x, iy, w, isTraining, isRight);
-	iy = iy + 24;
-
-	-- look up leaderboard entry for this player
-	local entry = nil;
-	local leaderboard = QuerySelfLeaderboard(world.mapName, "race");
-	if leaderboard ~= nil then
-		entry = leaderboard.friendsEntries[player.steamId];
-	end
-	
-	-- best time
-	local hasBestTime = false;
-	local text = "none qualified";
-	if entry ~= nil and entry.timeMillis > 0 then
-		text = FormatTimeToDecimalTime(entry.timeMillis);
-		hasBestTime = true;
-	end
-	drawTinyStat("Best Time", text, x, iy, w, hasBestTime, isRight);
-	iy = iy + 24;
-
-	-- current time
-	local currentRaceTime = "-";
-	if isTraining then
-		currentRaceTime = 0;
-		if player.raceActive then
-			currentRaceTime = player.raceTimeCurrent;
-		end
-		if world.gameState == GAME_STATE_GAMEOVER then
-			currentRaceTime = player.raceResults[1].time;
-		end
-		currentRaceTime = FormatTimeToDecimalTime(currentRaceTime);
-	end
-	drawTinyStat("Current Time", currentRaceTime, x, iy, w, isTraining, isRight);
-
-	-- -- tick if we got all tokens
-	-- if isTraining and tokensTotal > 0 and tokensAchieved >= tokensTotal then
-	-- 	local intensity = 1;
-	-- 	local hoverAmont = 0;
-	-- 	local enabled = true;
-	-- 	
-	-- 	nvgFillColor(ui2FormatColor(UI2_COLTYPE_TEXT_GREEN, intensity, hoverAmont, enabled));
-	-- 	nvgSvg("internal/ui/icons/tick", x + 364, iy, 10);
-	-- 
-	-- 	nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-	-- 	nvgFontBlur(0);
-	-- 	nvgFontSize(32);
-	-- 
-	-- 	nvgFontFace("TitilliumWeb-Regular");
-	-- 	--nvgFillColor(Color(232,232,232, 255));
-	-- 	nvgText(x + 380, iy, "all tokens collected");
-	-- end
-	-- inform player when they've qualified
-	if true then--world.gameState == GAME_STATE_GAMEOVER then
-		if (tokensAchieved >= tokensTotal) and (goalsDone >= goalCount) then
-			local intensity = 1;
-			local hoverAmont = 0;
-			local enabled = true;
-			
-			nvgFillColor(ui2FormatColor(UI2_COLTYPE_TEXT_GREEN, intensity, hoverAmont, enabled));
-			nvgSvg("internal/ui/icons/tick", x + 364, iy, 10);
-			
-			nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-			nvgFontBlur(0);
-			nvgFontSize(32);
-			
-			nvgFontFace("TitilliumWeb-Regular");
-			--nvgFillColor(Color(232,232,232, 255));
-			nvgText(x + 380, iy, "qualified");
-		end
-	end
-	iy = iy + 24;
-
-	-- if true then--world.gameState == GAME_STATE_GAMEOVER then
-	-- 	if (tokensAchieved < tokensTotal) or (goalsDone < goalCount) then
-	-- 		local intensity = 1;
-	-- 		local hoverAmont = 0;
-	-- 		local enabled = true;
-	-- 	
-	-- 		nvgFillColor(ui2FormatColor(UI2_COLTYPE_FAVORITE, intensity, hoverAmont, enabled));
-	-- 		nvgSvg("internal/ui/icons/skull", x + 230, iy, 10);
-	-- 
-	-- 		nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-	-- 		nvgFontBlur(0);
-	-- 		nvgFontSize(28);
-	-- 
-	-- 		nvgFontFace("TitilliumWeb-Regular");
-	-- 		--nvgFillColor(Color(232,232,232, 255));
-	-- 		nvgText(x + 250, iy, "collect all tokens and goals to quality");
-	-- 	end
-	-- end
-end
-
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 function ScoreboardPlusRace:drawBreakdown(player, otherPlayer, x, y, w, isRight)
@@ -1103,168 +1044,6 @@ function ScoreboardPlusRace:drawTrainingBreakdown(player, otherPlayer, x, y, w, 
 			end
 		end
 
-		iy = iy + 24;
-	end
-		
-	nvgRestore();
-end
-
--- edited by kawumm
-function ScoreboardPlusRace:drawRaceLeaderboard(x, y, w, h, player, isRight)
-	local iy = y + 24;
-	local optargs = {};
-	optargs.nofont = true;
-
-	nvgSave();
-	
-	-- bg
-	nvgBeginPath();
-	nvgRoundedRect(x, y, w, h, 5);
-	nvgFillColor(colBackground);
-	nvgFill();
-	
-	--self:drawFfaHeader(x, iy, w, 80, "Race Leaderboard", Color(232,232,232), headerDetails, 5, isRight);
-	--iy = iy + 108;
-
-	-- powerups & item control
-	local playerCameraAttachedTo = getPlayer();
-	local isPlaying = player == playerCameraAttachedTo;
-	self:drawRaceStats(x, y, w, isRight, player, isPlaying);
-	iy = iy + 120;
-
-	nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-	nvgFontFace("TitilliumWeb-Regular");
-	nvgFontBlur(0);
-
-	-- leaderboard title
-	nvgFillColor(Color(130,130,130));
-	nvgFontSize(24);
-	nvgText(x + padx, iy, "LEADERBOARDS");	
-	
-	-- leaderboard type
-	local leaderboardType = widgetGetConsoleVariable("leaderboard");
-	if  leaderboardType ~= "friends" and leaderboardType ~= "global" and leaderboardType ~= "top" then
-		leaderboardType = "friends"
-	end
-	local leaderboards =
-	{
-		"FRIENDS",
-		"GLOBAL",
-		"TOP"
-	};
-	local leaderboardTypeNew = string.lower(ui2Spinner(leaderboards, string.upper(leaderboardType), x + padx + 170, iy-20, 150, optargs));
-	if leaderboardTypeNew ~= leaderboardType then
-		widgetSetConsoleVariable("leaderboard", leaderboardTypeNew);
-	end
-	iy = iy + 26;
-
-	local leadboard, entries, entryCount, useGlobalRank;
-	if leaderboardType == "friends" then
-		leaderboard = QueryFriendsLeaderboard(world.mapName, "race");
-		entries, entryCount = ExtractFriendsLeaderboardEntries(leaderboard);
-		useGlobalRank = false;
-	elseif leaderboardType == "top" then
-		leaderboard = QueryGlobalLeaderboard(world.mapName, "race", "toponly");
-		entries, entryCount = ExtractGlobalLeaderboardEntries(leaderboard);
-		useGlobalRank = true;
-	else
-		leaderboard = QueryGlobalLeaderboard(world.mapName, "race");
-		entries, entryCount = ExtractGlobalLeaderboardEntries(leaderboard);
-		useGlobalRank = true;
-	end
-
-	-- find our rank
-	local myRank = 1;
-	for i = 1, entryCount do
-		if entries[i].steamId == steamId then
-			myRank = i;
-		end
-	end
-
-	-- find range
-	
-	
-	local startRank = 1;
-	local endRank = math.min(13, entryCount);
-	if leaderboardType ~= "top" then
-		startRank = math.max(myRank - 6, 1);
-		endRank = math.min(myRank + 6, entryCount);
-		startRank = math.max(endRank - 12, 1);
-		endRank = math.min(startRank + 12, entryCount);
-	end
-
-	-- determine rank width do we scale well (to big rank numbers :))
-	local rankWidth = 0;
-	if entryCount > 0 then 
-		local entry = entries[endRank];
-		local rank = useGlobalRank and entry.globalRank or endRank;
-		rankWidth = string.len(rank) * 16;
-		rankWidth = math.max(rankWidth, 32);
-	end
-	
-	-- print entries
-	nvgFontSize(32);
-	for rank = startRank, endRank do
-		local entry = entries[rank];
-		local old = entry.old;
-
-		local col = Color(170,170,170);
-		if entry.steamId == steamId then
-			nvgFontFace("TitilliumWeb-Bold");
-		else
-			nvgFontFace("TitilliumWeb-Regular");
-		end
-
-		-- rank
-		local ix = x + padx;
-		nvgTextAlign(NVG_ALIGN_CENTER, NVG_ALIGN_MIDDLE);
-		nvgFillColor(col);
-		nvgText(ix + rankWidth/2, iy, useGlobalRank and entry.globalRank or rank);
-		ix = ix + rankWidth;
-
-		-- avatar
-		local ih = 20;
-		ix = ix + 10;
-		nvgBeginPath();
-		nvgRoundedRect(ix, iy-9, ih, ih, 4);
-		nvgFillColor(Color(230,220,240));
-		nvgFillImagePattern("$avatarSmall_"..entry.steamId, ix, iy-9, ih, ih);
-		nvgFill();
-		ix = ix + ih + 8;
-		
-		-- name
-		local name = "Name_Not_Available";
-		if steamFriends[entry.steamId] ~= nil then
-			name = steamFriends[entry.steamId].personaName;
-		end
-		
-		nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-		nvgFillColor(col);
-		nvgText(ix, iy, name);
-			
-		-- time
-		local text = FormatTimeToDecimalTime(entry.timeMillis);
-		if old then
-			nvgFillColor(UI2_COLTYPE_FAVORITE.base);
-		end
-		nvgText(x + padx + 325, iy, text);
-		
-		-- diff time
-		if rank~=startRank then
-			text = "(+" .. FormatTimeToDecimalShort(entry.timeMillis-entries[startRank].timeMillis) .. ")";
-			nvgText(x + padx + 430, iy, text);
-		end
-		
-		if old then
-			if entry.mapHash ~= leaderboard.mapHash then
-				local optargs = {};
-				optargs.optionalId = i;
-				ui2TooltipBox("This result was obtained on an older version", x + padx + 535, iy-16, 250, optargs);
-			end
-		end
-		
-
-				
 		iy = iy + 24;
 	end
 		
@@ -1511,6 +1290,9 @@ function DrawScores(x, y, row, player, isSelected, m, w, h, optargs)
 				score = FormatTimeToDecimalTime(score);
 			end
 		end
+		if player.forfeit then
+			score = "FORFEIT"
+		end
 		nvgText(ix, iy+h/2-1, score);
 	end
 
@@ -1528,36 +1310,70 @@ function DrawScores(x, y, row, player, isSelected, m, w, h, optargs)
 
 	-- show experience gain in post-game screen
 	if world.gameState == GAME_STATE_GAMEOVER then
-		-- experience on transition only
-		local growTime = GetSecondsGrown();
-		local experienceAlpha = 0;
-		experienceAlpha = LerpWithFunc(EaseIn, growTime, experienceAlpha, 0, .2, 0, 1);
-		experienceAlpha = LerpWithFunc(EaseInOut, growTime, experienceAlpha, GROW_TIME_LEN+1.5, GROW_TIME_LEN + 2.5, 1, 0);
-		if experienceAlpha > 0 then
-			-- pull experience vars from player, and step it up as time goes on
-			local experience, didLevelUp = ProcessExperience(player.experience, player.experienceGained);
-			local experienceVars = GetExperienceVars(experience);
 		
-			local ix = x + scoreboardOffsetX["Score"] - 60;
-			nvgFontFace("TitilliumWeb-Regular");
-			nvgFontSize(20);
-			nvgTextAlign(NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
-			nvgFillColor(Color(180, 180, 180, experienceAlpha*intensity));
-			nvgText(ix, iy+19, "Rank: " .. experienceVars.level);
-		
-			-- level up explosion
-			if didLevelUp then
-				for i = 1, 5 do
-					ExplosionEmitter:addSpark(
-						math.random(ix - 5, ix + 5),
-						math.random(iy+19 - 5, iy+19 + 5));
-				end
-			end
+		if player.mmr ~= 0 then
+			-- -- TODO: show MMR rank changing
+			-- local ix = x + scoreboardOffsetX["Score"] - 60;
+			-- nvgFontFace("TitilliumWeb-Regular");
+			-- nvgFontSize(20);
+			-- nvgTextAlign(NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
+			-- nvgFillColor(Color(180, 180, 180, intensity));
+			-- local text = "Rank: "
+			-- if player.rankChange >= 0 then
+			-- 	text = text .. "+"
+			-- end
+			-- text = text .. player.rankChange
+			-- nvgText(ix, iy+19, text);
 
+			-- pull experience vars from player, and step it up as time goes on
+			local mmrCurrent, divChanged = ProcessMmr(player.mmr, player.mmrBest, player.mmrNew);
+
+			-- alpha
+			local growTime = GetSecondsGrown();
+			local experienceAlpha = 0;
+			experienceAlpha = LerpWithFunc(EaseIn, growTime, experienceAlpha, 0, .2, 0, 1);
+			experienceAlpha = LerpWithFunc(EaseInOut, growTime, experienceAlpha, RATING_CHANGE_TIME+1.5, RATING_CHANGE_TIME + 2.5, 1, 0);
+			
+			local ix = x + scoreboardOffsetX["Score"] - 60;
 			local experienceWidth = 266;
 			local optargs = {};
 			optargs.intensity = experienceAlpha;
-			DrawExperienceBar(ix - experienceWidth, iy+30, experienceWidth, 2, player.experience, player.experienceGained, experience, optargs);
+
+			-- experience bar
+			DrawRatingBar(ix-experienceWidth, iy + 30, experienceWidth, 2, mmrCurrent, player.mmrBest, player.mmr, player.mmrNew);
+		else
+			-- experience on transition only
+			local growTime = GetSecondsGrown();
+			local experienceAlpha = 0;
+			experienceAlpha = LerpWithFunc(EaseIn, growTime, experienceAlpha, 0, .2, 0, 1);
+			experienceAlpha = LerpWithFunc(EaseInOut, growTime, experienceAlpha, GROW_TIME_LEN+1.5, GROW_TIME_LEN + 2.5, 1, 0);
+			--experienceAlpha = 1
+			if experienceAlpha > 0 then
+				-- pull experience vars from player, and step it up as time goes on
+				local experience, didLevelUp = ProcessExperience(player.experience, player.experienceGained);
+				local experienceVars = GetExperienceVars(experience);
+		
+				local ix = x + scoreboardOffsetX["Score"] - 60;
+				nvgFontFace("TitilliumWeb-Regular");
+				nvgFontSize(20);
+				nvgTextAlign(NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
+				nvgFillColor(Color(180, 180, 180, experienceAlpha*intensity));
+				nvgText(ix, iy+19, "Level: " .. experienceVars.level);
+		
+				-- level up explosion
+				if didLevelUp then
+					for i = 1, 5 do
+						ExplosionEmitter:addSpark(
+							math.random(ix - 5, ix + 5),
+							math.random(iy+19 - 5, iy+19 + 5));
+					end
+				end
+
+				local experienceWidth = 266;
+				local optargs = {};
+				optargs.intensity = experienceAlpha;
+				DrawExperienceBar(ix - experienceWidth, iy+30, experienceWidth, 2, player.experience, player.experienceGained, experience, optargs);
+			end
 		end
 	end
 	
@@ -1862,6 +1678,7 @@ function ScoreboardPlusRace:drawFooter(x, y, w,
 			colorQueueByTeam = true;
 		end
 	
+		nvgFillColor(Color(232,232,232))
 		nvgFontFace("titilliumWeb-Bold");
 		nvgText(x+padx, iy, "In Queue ("..queued..")");
 		nvgFontFace("titilliumWeb-Regular");
@@ -1871,6 +1688,7 @@ function ScoreboardPlusRace:drawFooter(x, y, w,
 	
 	-- spectators
 	if spectators > 0 then
+		nvgFillColor(Color(232,232,232))
 		nvgFontFace("titilliumWeb-Bold");
 		nvgText(x+padx, iy, "Spectators");
 		nvgFontFace("titilliumWeb-Regular");
@@ -1880,6 +1698,7 @@ function ScoreboardPlusRace:drawFooter(x, y, w,
 	
 	-- editors
 	if editors > 0 then
+		nvgFillColor(Color(232,232,232))
 		nvgFontFace("titilliumWeb-Bold");
 		nvgText(x+padx, iy, "Editors");
 		nvgFontFace("titilliumWeb-Regular");
@@ -1889,6 +1708,7 @@ function ScoreboardPlusRace:drawFooter(x, y, w,
 	
 	-- referees
 	if referees > 0 then
+		nvgFillColor(Color(232,232,232))
 		nvgFontFace("titilliumWeb-Bold");
 		nvgText(x+padx, iy, "Referees");
 		nvgFontFace("titilliumWeb-Regular");
@@ -1942,9 +1762,15 @@ function ScoreboardPlusRace:drawTeamHeader(x, y, w, h, name, nameCol, details, s
 	ix = isRight and x + 15 or x+w-15;
 	nvgFontFace("TitilliumWeb-Bold");
 	nvgTextAlign(isRight == true and NVG_ALIGN_LEFT or NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
-	nvgFillColor(isWinning and Color(232,232,232) or Color(170,170,170));
-	nvgFontSize(128);
-	nvgText(ix, iy+44, score);
+	if score == "FORFEIT" then
+		nvgFillColor(Color(200,70,70));
+		nvgFontSize(48);
+		nvgText(ix, iy+44, score);
+	else
+		nvgFillColor(isWinning and Color(232,232,232) or Color(170,170,170));
+		nvgFontSize(128);
+		nvgText(ix, iy+44, score);
+	end
 
 	-- line
 	nvgBeginPath();
@@ -2029,10 +1855,6 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 	if gameMode.hasTeams then
 		nameCol = teamColors[player.team];
 	end
-	
-	-- pull experience vars from player, and step it up as time goes on
-	local experience, didLevelUp = ProcessExperience(player.experience, player.experienceGained);
-	local experienceVars = GetExperienceVars(experience);
 
 	-- if player isn't in game (i.e. he's spec / editor etc), just make his colour white
 	if player.state ~= PLAYER_STATE_INGAME then
@@ -2047,6 +1869,7 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 	local outsidex = isRight and x+w or x;
 	local barw = w - 244;
 	local barx = x + (padx + 10 + 64) * dirx;
+	local topoffsety = player.rank ~= 0 and -1 or 0
 	if isRight then barx = barx + w - barw end;
 	
 	nvgFontFace("TitilliumWeb-Bold");
@@ -2065,11 +1888,11 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 		nvgFill();
 	--end
 
-	---- flag
+	-- flag
 	local ix = x + (padx + 91) * dirx;
 	if isRight then ix = ix + w end;
 	nvgFillColor(Color(255, 255, 255));
-	nvgSvg(iconName, ix, iy+30, 16);
+	nvgSvg(iconName, ix, iy+30+topoffsety, 16);
 	ix = ix + 21 * dirx;
 
 	-- name
@@ -2080,9 +1903,9 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 	if isRight then
 		nvgIntersectScissor(ix-310, iy, 310, 100);
 	else
-		nvgIntersectScissor(ix, iy, 310, 100);
+		nvgIntersectScissor(ix, iy, 305, 100);
 	end
-	nvgText(ix, iy+27, name);
+	nvgText(ix, iy+27+topoffsety, name);
 	nvgRestore();
 	
 	-- second row
@@ -2096,35 +1919,70 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 	--nvgSvg(iconName, ix, iy, 12);
 	--ix = ix + 18 * dirx;
 	
-	-- rank: 20   XP Gained: 0
-	local text = string.format("Rank: %d   XP Gained: %d", experienceVars.level, player.experienceGained);
 	nvgFontFace("TitilliumWeb-Regular");
 	nvgFontSize(24);
 	nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
-	if isRight == true then
-		ix = ix - nvgTextWidth(text);
-	end
 	local col = Color(170,170,170);
-	local rankx = ix;
-	nvgFillColor(Color(232,232,232));
-	nvgText(ix, iy, text);
-	ix = ix + nvgTextWidth("Rank: ") + nvgTextWidth(experienceVars.level)/2;
-	
-	-- pretty exploisions
-	if didLevelUp then
-		for i = 1, 25 do
-			ExplosionEmitter:addSpark(
-				math.random(ix - 5, ix + 5),
-				math.random(iy - 5, iy + 5)+5);
+	if player.mmr ~= 0 then
+		-- pull experience vars from player, and step it up as time goes on
+		local mmrCurrent, divChanged = ProcessMmr(player.mmr, player.mmrBest, player.mmrNew);
+
+		local r = getRatingInfo(mmrCurrent, player.mmrBest)
+		r.name = string.upper(r.name)
+		bgcol = Color(r.col.r, r.col.g, r.col.b, r.col.a * .5)
+
+		local tx;
+		local iconx
+		if isRight == true then
+			tx = ix - nvgTextWidth(r.name) - 9 - 15 * r.iconScale;
+			iconx = ix - 2 - 8 * r.iconScale
+		else
+			tx = ix + 9 + 15 * r.iconScale
+			iconx = ix + 2 + 8 * r.iconScale
 		end
+		nvgFillColor(col);
+		nvgText(tx, iy, r.name);
+		
+		nvgFillColor(r.col)
+		nvgSvg(r.icon, iconx, iy+.5, 8 * r.iconScale);
+				
+		-- experience bar
+		DrawRatingBar(barx, iy + 16, barw, 5, mmrCurrent, player.mmrBest, player.mmr, player.mmrNew);
+	else
+		-- pull experience vars from player, and step it up as time goes on
+		local experience, didLevelUp = ProcessExperience(player.experience, player.experienceGained);
+		local experienceVars = GetExperienceVars(experience);
+		
+		-- level: 20   XP Gained: 0
+		local text = string.format("Level: %d   XP Gained: %d", experienceVars.level, player.experienceGained);
+		if isRight == true then
+			ix = ix - nvgTextWidth(text);
+		end
+		nvgFillColor(Color(232,232,232));
+		nvgText(ix, iy, text);
+		ix = ix + nvgTextWidth("Level: ") + nvgTextWidth(experienceVars.level)/2;
+	
+		-- pretty exploisions
+		if didLevelUp then
+			for i = 1, 25 do
+				ExplosionEmitter:addSpark(
+					math.random(ix - 5, ix + 5),
+					math.random(iy - 5, iy + 5)+5);
+			end
+		end
+
+		-- experience bar
+		DrawExperienceBar(barx, iy + 16, barw, 5, player.experience, player.experienceGained, experience);
 	end
 
-	-- ping
+	-- position for latency & PL
 	ix = barx;
 	if not isRight then
 		ix = ix + barw;
 		ix = ix - nvgTextWidth("Latency: " .. player.latency .. "   PL: " .. player.packetLoss);
 	end
+
+	-- ping
 	nvgFillColor(col);
 	nvgText(ix, iy, "Latency: ");
 	ix = ix + nvgTextWidth("Latency: ");
@@ -2140,23 +1998,27 @@ function ScoreboardPlusRace:drawPlayerHeader(x, y, w, h, player, isRight, noScor
 	nvgText(ix, iy, player.packetLoss);
 	ix = ix + nvgTextWidth(player.packetLoss);
 
-	-- experience bar
-	iy = iy + 16;
-	DrawExperienceBar(barx, iy, barw, 5, player.experience, player.experienceGained, experience);
-		
 	-- score
 	if noScore ~= true then
 		local ix = isRight and x + 15 or x+w-15;
 		nvgTextAlign(isRight == true and NVG_ALIGN_LEFT or NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE);
 		if world.gameState == GAME_STATE_WARMUP then
-			nvgFontFace("TitilliumWeb-Bold");
-			nvgFontSize(64);
-			nvgFillColor(player.ready and Color(232,232,232,255) or Color(92,92,92,128));
-			nvgText(ix, y+46, "READY");
+			if player.mmr == 0 then	-- only show ready on non-MM games
+				nvgFontFace("TitilliumWeb-Bold");
+				nvgFontSize(64);
+				nvgFillColor(player.ready and Color(232,232,232,255) or Color(92,92,92,128));
+				nvgText(ix, y+46, "READY");
+			end
 		else
+			if player.forfeit then
+				score = "FORFEIT"
+				nvgFillColor(Color(200,70,70));
+				nvgFontSize(48);
+			else
+				nvgFillColor(isWinning and Color(232,232,232) or Color(170,170,170));
+				nvgFontSize(128);
+			end
 			nvgFontFace("TitilliumWeb-Bold");
-			nvgFillColor(isWinning and Color(232,232,232) or Color(170,170,170));
-			nvgFontSize(128);
 			nvgText(ix, y+44, score);
 		end
 	end
@@ -2265,10 +2127,21 @@ function ScoreboardPlusRace:drawPlayerCard(x, y, w, h, player, otherPlayer, isRi
 	local iy = y;
 
 	-- bg
+	local mmrCurrent = ProcessMmr(player.mmr, player.mmrBest, player.mmrNew)
+	local r = getRatingInfo(mmrCurrent, player.mmrBest)
+	colMmrBackground = Color(r.col.r*.5, r.col.g*.5, r.col.b*.5, colBackground.a)
 	nvgBeginPath();
 	nvgRoundedRect(ix, iy, w, h, 5);
 	nvgFillColor(colBackground);
+	if player.mmr ~= 0 then
+		nvgFillLinearGradient(ix, iy+90, ix, iy+90, colMmrBackground, colBackground)
+	end
 	nvgFill();
+	
+	-- nvgBeginPath();
+	-- nvgRoundedRect(ix, iy, w, 90, 0);
+	-- nvgFillColor(Color(mmrcol.r,mmrcol.g,mmrcol.b, 50));
+	-- nvgFill();
 
 	-- header
 	local hideScore = isRace or isTraining;
@@ -2388,14 +2261,27 @@ end
 function ScoreboardPlusRace:drawTeamCard(x, y, w, h, teamIndex, teamPlayers, teamPlayerCount, teamStats, otherTeamStats, isRight)
 	local ix = x;
 	local iy = y;
-	
+
+	-- check for forfeit
+	local teamForfeit = true
+	for k, teamPlayer in pairs(teamPlayers) do
+		if teamPlayer.forfeit == false then
+			teamForfeit = false
+		end
+	end
+
+	local teamScore = world.teams[teamIndex].score
+	if teamForfeit and teamPlayerCount > 0 then
+		teamScore = "FORFEIT"
+	end
+		
 	-- team header
 	local headerDetails = teamPlayerCount == 1 and "1 Player" or teamPlayerCount .. " Players";
 	nvgBeginPath();
 	nvgRoundedRect(ix, iy, w, h, 5);
 	nvgFillColor(colBackground);
 	nvgFill();
-	self:drawTeamHeader(ix, iy, w, 80, world.teams[teamIndex].name, teamColors[teamIndex], headerDetails, world.teams[teamIndex].score, isRight);
+	self:drawTeamHeader(ix, iy, w, 80, world.teams[teamIndex].name, teamColors[teamIndex], headerDetails, teamScore, isRight);
 	iy = iy + 108;
 	local underheadery = iy;
 
@@ -2420,7 +2306,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 function ScoreboardPlusRace:drawGameplayReturnsTimer(x, y)
-	if world.gameState == GAME_STATE_GAMEOVER then
+	if world.gameState == GAME_STATE_GAMEOVER and world.timerActive then
 		
 		nvgSave();
 		
@@ -2560,18 +2446,21 @@ function ScoreboardPlusRace:draw()
 	table.sort(refereePlayers, sortForName);
 
 	-- temp
-	-- spectatorPlayers = connectedPlayers;
-	-- queuedPlayers = connectedPlayers;
-	-- editorPlayers = connectedPlayers;
-	-- refereePlayers = connectedPlayers;
-	-- spectators = 1;
-	-- editors = 1;
-	-- referees = 1;
-	-- queued = 1;
-	-- for i = 2, 23 do
-	-- 	realPlayers[i] = realPlayers[1];
-	-- end
-	-- realPlayerCount = 23;
+	--spectatorPlayers = connectedPlayers;
+	--queuedPlayers = connectedPlayers;
+	--editorPlayers = connectedPlayers;
+	--refereePlayers = connectedPlayers;
+	--spectators = 1;
+	--editors = 1;
+	--referees = 1;
+	--queued = 1;
+	--for i = 2, 23 do
+	--	realPlayers[i] = realPlayers[1];
+	--end
+	--realPlayerCount = 23;
+	--local t = 1
+	--teamPlayers[t][2] = teamPlayers[t][1];
+	--teamPlayerCount[t] = 2;
 
 	-- ready timer
 	if world.gameState == GAME_STATE_WARMUP then
@@ -2710,7 +2599,6 @@ function ScoreboardPlusRace:draw()
 			self:drawRaceLeaderboard(ix, iy, w/2-padx, 530, player, false);
 			iy = iy + 570;
 		end
-			
 
 		-- player list on right
 		local ix = padx;
@@ -2748,4 +2636,310 @@ function ScoreboardPlusRace:draw()
 
 	-- state stuff for experience grown
 	self.lastSecondsGrown = GetSecondsGrown();
+end
+
+--edited by Kawumm
+function ScoreboardPlusRace:drawRaceStats(x, y, w, isRight, player, isPlaying)
+	local isTraining = player.state == PLAYER_STATE_INGAME;
+	local h = 368;
+	local iy = y + 24;
+
+	-- gather tokens
+	local tokens = {};
+	local tokensAchieved = 0;
+	if isTraining then
+		for k, pickup in pairs(pickupTimers) do
+			if pickup.type == PICKUP_TYPE_TRAINING_TOKEN then
+				tokens[pickup.tokenIndex] = {};
+				tokens[pickup.tokenIndex].achieved = not pickup.isActive;
+				if tokens[pickup.tokenIndex].achieved then
+					tokensAchieved = tokensAchieved + 1;
+				end
+			end
+		end
+	end
+
+	-- count tokens
+	-- (we do this separately to gather tokens to ensure tokens with same tokenIndex ARE ignored - as that's how the leaderboard recording will work - and this will help visualise to the user there is a problem)
+	local tokensTotal = 0;
+	for k, v in pairs(tokens) do
+		tokensTotal = tokensTotal + 1;
+	end
+	
+	-- tokens
+	drawTinyStat("Tokens", "", x, iy, w, isPlaying, isRight);
+	local ir = 12;
+	local istride = 32;
+	local ix = x + 200 + padx + ir;
+	for k, token in pairs(tokens) do
+		local achieved = token.achieved;
+		nvgFillColor(achieved and Color(232,232,232,255) or Color(70,70,70,255));
+		nvgSvg("internal/items/training_token/training_token", ix, iy, ir);
+		ix = ix + istride;
+	end
+	iy = iy + 24;
+	
+	-- goals
+	local goalText = "-";
+	local goalsDone = 0;
+	local goalCount = 0;
+	if isTraining then
+		for k, v in pairs(goals) do
+			if v.achieved then goalsDone = goalsDone + 1 end;
+			goalCount = goalCount + 1;
+		end
+		goalText = goalsDone .. " / " .. goalCount;
+	end
+	drawTinyStat("Goals", goalText, x, iy, w, isTraining, isRight);
+	iy = iy + 24;
+
+	-- look up leaderboard entry for this player
+	local entry = nil;
+	local leaderboard = QuerySelfLeaderboard(world.mapName, "race");
+	if leaderboard ~= nil then
+		entry = leaderboard.friendsEntries[player.steamId];
+	end
+	
+	-- best time
+	local hasBestTime = false;
+	local text = "none qualified";
+	if entry ~= nil and entry.timeMillis > 0 then
+		text = FormatTimeToDecimalTime(entry.timeMillis);
+		hasBestTime = true;
+	end
+	drawTinyStat("Best Time", text, x, iy, w, hasBestTime, isRight);
+	iy = iy + 24;
+
+	-- current time
+	local currentRaceTime = "-";
+	if isTraining then
+		currentRaceTime = 0;
+		if player.raceActive then
+			currentRaceTime = player.raceTimeCurrent;
+		end
+		if world.gameState == GAME_STATE_GAMEOVER then
+			currentRaceTime = player.raceResults[1].time;
+		end
+		currentRaceTime = FormatTimeToDecimalTime(currentRaceTime);
+	end
+	drawTinyStat("Current Time", currentRaceTime, x, iy, w, isTraining, isRight);
+
+	-- -- tick if we got all tokens
+	-- if isTraining and tokensTotal > 0 and tokensAchieved >= tokensTotal then
+	-- 	local intensity = 1;
+	-- 	local hoverAmont = 0;
+	-- 	local enabled = true;
+	-- 	
+	-- 	nvgFillColor(ui2FormatColor(UI2_COLTYPE_TEXT_GREEN, intensity, hoverAmont, enabled));
+	-- 	nvgSvg("internal/ui/icons/tick", x + 364, iy, 10);
+	-- 
+	-- 	nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+	-- 	nvgFontBlur(0);
+	-- 	nvgFontSize(32);
+	-- 
+	-- 	nvgFontFace("TitilliumWeb-Regular");
+	-- 	--nvgFillColor(Color(232,232,232, 255));
+	-- 	nvgText(x + 380, iy, "all tokens collected");
+	-- end
+	-- inform player when they've qualified
+	if true then--world.gameState == GAME_STATE_GAMEOVER then
+		if (tokensAchieved >= tokensTotal) and (goalsDone >= goalCount) then
+			local intensity = 1;
+			local hoverAmont = 0;
+			local enabled = true;
+			
+			nvgFillColor(ui2FormatColor(UI2_COLTYPE_TEXT_GREEN, intensity, hoverAmont, enabled));
+			nvgSvg("internal/ui/icons/tick", x + 364, iy, 10);
+			
+			nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+			nvgFontBlur(0);
+			nvgFontSize(32);
+			
+			nvgFontFace("TitilliumWeb-Regular");
+			--nvgFillColor(Color(232,232,232, 255));
+			nvgText(x + 380, iy, "qualified");
+		end
+	end
+	iy = iy + 24;
+
+	-- if true then--world.gameState == GAME_STATE_GAMEOVER then
+	-- 	if (tokensAchieved < tokensTotal) or (goalsDone < goalCount) then
+	-- 		local intensity = 1;
+	-- 		local hoverAmont = 0;
+	-- 		local enabled = true;
+	-- 	
+	-- 		nvgFillColor(ui2FormatColor(UI2_COLTYPE_FAVORITE, intensity, hoverAmont, enabled));
+	-- 		nvgSvg("internal/ui/icons/skull", x + 230, iy, 10);
+	-- 
+	-- 		nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+	-- 		nvgFontBlur(0);
+	-- 		nvgFontSize(28);
+	-- 
+	-- 		nvgFontFace("TitilliumWeb-Regular");
+	-- 		--nvgFillColor(Color(232,232,232, 255));
+	-- 		nvgText(x + 250, iy, "collect all tokens and goals to quality");
+	-- 	end
+	-- end
+end
+
+-- edited by kawumm
+function ScoreboardPlusRace:drawRaceLeaderboard(x, y, w, h, player, isRight)
+	local iy = y + 24;
+	local optargs = {};
+	optargs.nofont = true;
+
+	nvgSave();
+	
+	-- bg
+	nvgBeginPath();
+	nvgRoundedRect(x, y, w, h, 5);
+	nvgFillColor(colBackground);
+	nvgFill();
+	
+	--self:drawFfaHeader(x, iy, w, 80, "Race Leaderboard", Color(232,232,232), headerDetails, 5, isRight);
+	--iy = iy + 108;
+
+	-- powerups & item control
+	local playerCameraAttachedTo = getPlayer();
+	local isPlaying = player == playerCameraAttachedTo;
+	self:drawRaceStats(x, y, w, isRight, player, isPlaying);
+	iy = iy + 120;
+
+	nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+	nvgFontFace("TitilliumWeb-Regular");
+	nvgFontBlur(0);
+
+	-- leaderboard title
+	nvgFillColor(Color(130,130,130));
+	nvgFontSize(24);
+	nvgText(x + padx, iy, "LEADERBOARDS");	
+	
+	-- leaderboard type
+	local leaderboardType = widgetGetConsoleVariable("leaderboard");
+	if  leaderboardType ~= "friends" and leaderboardType ~= "global" and leaderboardType ~= "top" then
+		leaderboardType = "friends"
+	end
+	local leaderboards =
+	{
+		"FRIENDS",
+		"GLOBAL",
+		"TOP"
+	};
+	local leaderboardTypeNew = string.lower(ui2Spinner(leaderboards, string.upper(leaderboardType), x + padx + 170, iy-20, 150, optargs));
+	if leaderboardTypeNew ~= leaderboardType then
+		widgetSetConsoleVariable("leaderboard", leaderboardTypeNew);
+	end
+	iy = iy + 26;
+
+	local leadboard, entries, entryCount, useGlobalRank;
+	if leaderboardType == "friends" then
+		leaderboard = QueryFriendsLeaderboard(world.mapName, "race");
+		entries, entryCount = ExtractFriendsLeaderboardEntries(leaderboard);
+		useGlobalRank = false;
+	elseif leaderboardType == "top" then
+		leaderboard = QueryGlobalLeaderboard(world.mapName, "race", "toponly");
+		entries, entryCount = ExtractGlobalLeaderboardEntries(leaderboard);
+		useGlobalRank = true;
+	else
+		leaderboard = QueryGlobalLeaderboard(world.mapName, "race");
+		entries, entryCount = ExtractGlobalLeaderboardEntries(leaderboard);
+		useGlobalRank = true;
+	end
+
+	-- find our rank
+	local myRank = 1;
+	for i = 1, entryCount do
+		if entries[i].steamId == steamId then
+			myRank = i;
+		end
+	end
+
+	-- find range
+	
+	
+	local startRank = 1;
+	local endRank = math.min(13, entryCount);
+	if leaderboardType ~= "top" then
+		startRank = math.max(myRank - 6, 1);
+		endRank = math.min(myRank + 6, entryCount);
+		startRank = math.max(endRank - 12, 1);
+		endRank = math.min(startRank + 12, entryCount);
+	end
+
+	-- determine rank width do we scale well (to big rank numbers :))
+	local rankWidth = 0;
+	if entryCount > 0 then 
+		local entry = entries[endRank];
+		local rank = useGlobalRank and entry.globalRank or endRank;
+		rankWidth = string.len(rank) * 16;
+		rankWidth = math.max(rankWidth, 32);
+	end
+	
+	-- print entries
+	nvgFontSize(32);
+	for rank = startRank, endRank do
+		local entry = entries[rank];
+		local old = entry.old;
+
+		local col = Color(170,170,170);
+		if entry.steamId == steamId then
+			nvgFontFace("TitilliumWeb-Bold");
+		else
+			nvgFontFace("TitilliumWeb-Regular");
+		end
+
+		-- rank
+		local ix = x + padx;
+		nvgTextAlign(NVG_ALIGN_CENTER, NVG_ALIGN_MIDDLE);
+		nvgFillColor(col);
+		nvgText(ix + rankWidth/2, iy, useGlobalRank and entry.globalRank or rank);
+		ix = ix + rankWidth;
+
+		-- avatar
+		local ih = 20;
+		ix = ix + 10;
+		nvgBeginPath();
+		nvgRoundedRect(ix, iy-9, ih, ih, 4);
+		nvgFillColor(Color(230,220,240));
+		nvgFillImagePattern("$avatarSmall_"..entry.steamId, ix, iy-9, ih, ih);
+		nvgFill();
+		ix = ix + ih + 8;
+		
+		-- name
+		local name = "Name_Not_Available";
+		if steamFriends[entry.steamId] ~= nil then
+			name = steamFriends[entry.steamId].personaName;
+		end
+		
+		nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+		nvgFillColor(col);
+		nvgText(ix, iy, name);
+			
+		-- time
+		local text = FormatTimeToDecimalTime(entry.timeMillis);
+		if old then
+			nvgFillColor(UI2_COLTYPE_FAVORITE.base);
+		end
+		nvgText(x + padx + 325, iy, text);
+		
+		-- diff time
+		if rank~=startRank then
+			text = "(+" .. FormatTimeToDecimalShort(entry.timeMillis-entries[startRank].timeMillis) .. ")";
+			nvgText(x + padx + 430, iy, text);
+		end
+		
+		if old then
+			if entry.mapHash ~= leaderboard.mapHash then
+				local optargs = {};
+				optargs.optionalId = i;
+				ui2TooltipBox("This result was obtained on an older version", x + padx + 535, iy-16, 250, optargs);
+			end
+		end
+		
+
+				
+		iy = iy + 24;
+	end
+		
+	nvgRestore();
 end
