@@ -10,7 +10,6 @@ RaceLeaderboardsPlus =
 {
 	canPosition = false,
 	canHide = false,
-	replacedFlag = false,
 };
 
 --------------------------------------------------------------------------------
@@ -82,11 +81,14 @@ end
 
 function RaceLeaderboardsPlus:show() 
 	local user = self.userData
-	if user.enabled and not self.replacedFlag then
+	if user.enabled then
 		if _G["Scoreboard"].drawPlayerCard ~=nil then
+			if Scoreboard.orgPlayerCard ~= nil then
+				consolePrint("(Race Leaderboards Plus) Scoreboard has already been modified. Do you have 2 instances of RaceLeaderboardsPlus running?")
+				return
+			end
 			Scoreboard.orgPlayerCard = _G["Scoreboard"].drawPlayerCard;
 			_G["Scoreboard"].drawPlayerCard = Scoreboard.drawNewPlayerCard;
-			self.replacedFlag = true;
 		else
 			consolePrint("(Race Leaderboards Plus) Failed to modify reflex scoreboard. Are you using a custom scoreboard widget?")
 		end
